@@ -1,0 +1,24 @@
+{
+  "list": [
+    {
+      "id": "1",
+      "item": "chleb"
+    },
+    {
+      "id": "2",
+      "item": "winogrona"
+    },
+    {
+      "id": "3",
+      "item": "ryz"
+    },
+    {
+      "id": "4",
+      "item": "mleko"
+    },
+    {
+      "id": "5",
+      "item": "jabol"
+    }
+  ]
+}
