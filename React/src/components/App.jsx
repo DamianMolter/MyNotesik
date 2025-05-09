@@ -5,6 +5,9 @@ import Note from "./Note";
 import CreateArea from "./CreateArea";
 
 function App() {
+
+  var isUserLogged = false;
+
   const [notes, setNotes] = useState([]);
 
   function addNote(newNote) {
@@ -21,7 +24,14 @@ function App() {
     });
   }
 
-  return (
+  if(!isUserLogged){
+    return (<div>
+      <Header />
+      
+      <Footer />
+    </div>);
+  } else {
+    return (
     <div>
       <Header />
       <CreateArea onAdd={addNote} />
@@ -39,6 +49,7 @@ function App() {
       <Footer />
     </div>
   );
+  }
 }
 
 export default App;
