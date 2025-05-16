@@ -35,7 +35,6 @@ function AuthContainer() {
           <div class="registerPanel">
             <h1>Rejestracja</h1>
             <form class="registerForm">
-              <input type="text" placeholder="Nazwa użytkownika" />
               <input type="email" placeholder="Email" />
               <input type="password" placeholder="Hasło" />
               <input type="password" placeholder="Potwierdź hasło" />
