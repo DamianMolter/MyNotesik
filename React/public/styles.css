@@ -123,8 +123,8 @@ form.create-note button {
   border-radius: 7px;
   box-shadow: 0 2px 5px #ccc;
   padding: 20px;
-  width: 300px; /* Nieco szerszy niż notatka dla lepszego wyglądu formularza */
-  margin: 30px auto; /* Wyśrodkowanie paneli */
+  width: 300px;
+  margin: 30px auto;
 }
 
 .loginPanel h1,
@@ -137,7 +137,7 @@ form.create-note button {
 
 .loginForm input,
 .registerForm input {
-  width: calc(100% - 20px); /* Uwzględnienie paddingu */
+  width: calc(100% - 20px);
   padding: 10px;
   margin-bottom: 15px;
   border: 1px solid #ddd;
@@ -189,17 +189,15 @@ form.create-note button {
   text-decoration: underline;
 }
 
-/* Kontenery do wyśrodkowania (jeśli nie używasz już innego layoutu) */
 .loginContainer,
 .registerContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: calc(100vh - 2.5rem - 52px); /* Wysokość viewport minus footer i header */
-  padding: 20px; /* Dodatkowy padding dla responsywności */
+  min-height: calc(100vh - 2.5rem - 52px);
+  padding: 20px;
 }
 
-/* Poprawka dla responsywności, aby panele nie były zbyt szerokie na mniejszych ekranach */
 @media (max-width: 400px) {
   .loginPanel,
   .registerPanel {
