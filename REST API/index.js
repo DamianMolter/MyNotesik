@@ -1,5 +1,8 @@
 import express from "express";
 import bodyParser from "body-parser";
+import cors from "cors";
+import notes from "./Database/notes.js";
+import users from "./Database/users.js";
 
 const app = express();
 const port = 4000;
@@ -20,7 +23,16 @@ let lastId = 1;
 
 // Middleware
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+//app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
+
+app.post("/login", (req, res) => {
+  console.log(req.body.email);
+  console.log(req.body.password);
+  res.send({
+    token: "test123",
+  });
+});
 
 //CHALLENGE 1: GET All posts
 

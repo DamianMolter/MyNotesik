@@ -1,19 +1,44 @@
-import React from "react";
-import axios from 
+import React, {useState} from "react";
+import axios from "axios"
+import PropTypes from "prop-types";
+
+async function loginUser(credentials) {
+ return fetch('http://localhost:4000/login', {
+   method: 'POST',
+   headers: {
+     'Content-Type': 'application/json'
+   },
+   body: JSON.stringify(credentials)
+ })
+   .then(data => data.json())
+}
+
 
 function Login(props) {
 
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+
+  const handleSubmit = async event => {
+    event.preventDefault();
+    const token = await loginUser({
+      email,
+      password
+    });
+    () => {props.setToken(token)}
+  }
+
   return (
     <div className="loginContainer">
-      <div class="loginPanel">
+      <div className="loginPanel">
         <h1>Logowanie</h1>
-        <form class="loginForm">
-          <input type="email" placeholder="Email" />
-          <input type="password" placeholder="Hasło" />
+        <form className="loginForm" onSubmit={handleSubmit}>
+          <input type="email" placeholder="Email" onChange={event => setEmail(event.target.value)}/>
+          <input type="password" placeholder="Hasło" onChange={event => setPassword(event.target.value)}/>
           <button type="submit">Zaloguj się</button>
-          <p class="login-register-text">
+          <p className="login-register-text">
             Nie masz konta?{" "}
-            <a href="#" class="register-link" onClick={() => {props.openRegisterPage(false)}}>
+            <a href="#" className="register-link" onClick={() => {props.openRegisterPage(false)}}>
               Zarejestruj się
             </a>
           </p>
@@ -21,6 +46,10 @@ function Login(props) {
       </div>
     </div>
   );
+}
+
+Login.propTypes = {
+  setToken: PropTypes.func.isRequired
 }
 
 export default Login;
