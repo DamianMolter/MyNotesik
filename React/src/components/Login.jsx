@@ -14,7 +14,7 @@ async function loginUser(credentials) {
 }
 
 
-function Login(props) {
+function Login({setToken, openRegisterPage}) {
 
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
@@ -25,7 +25,7 @@ function Login(props) {
       email,
       password
     });
-    () => {props.setToken(token)}
+    setToken(token);
   }
 
   return (
@@ -38,7 +38,7 @@ function Login(props) {
           <button type="submit">Zaloguj się</button>
           <p className="login-register-text">
             Nie masz konta?{" "}
-            <a href="#" className="register-link" onClick={() => {props.openRegisterPage(false)}}>
+            <a href="#" className="register-link" onClick={() => {openRegisterPage(false)}}>
               Zarejestruj się
             </a>
           </p>

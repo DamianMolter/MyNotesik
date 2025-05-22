@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import Login from "./Login";
 import Register from "./Register";
 
-function AuthContainer(props) {
+function AuthContainer({setToken}) {
   const [showLogin, setShowLogin] = useState(true);
 
   return (
     <div className="authContainer">
       {showLogin ? (
-        <Login openRegisterPage={setShowLogin} setToken={props.setToken} />
+        <Login openRegisterPage={setShowLogin} setToken={setToken} />
       ) : (
         <Register openLoginPage={setShowLogin} />
       )}

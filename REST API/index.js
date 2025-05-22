@@ -1,4 +1,4 @@
-import express from "express";
+import express, { response } from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import notes from "./Database/notes.js";
@@ -27,8 +27,9 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.post("/login", (req, res) => {
-  console.log(req.body.email);
-  console.log(req.body.password);
+  // const { email, password } = req.body;
+  // console.log(email);
+  // console.log(password);
   res.send({
     token: "test123",
   });
