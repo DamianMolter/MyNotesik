@@ -14,19 +14,19 @@ async function loginUser(credentials) {
 }
 
 
-function Login({openRegisterPage, setToken}) {
+function Login({openRegisterPage, setToken, setLoggedUserId}) {
 
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const token = await loginUser({
+    const response = await loginUser({
       email,
       password
     });
-    console.log(token);
-    setToken(token);
+    setToken(response.token);    
+    setLoggedUserId(response.userId);    
   }
 
   return (
@@ -50,7 +50,8 @@ function Login({openRegisterPage, setToken}) {
 }
 
 Login.propTypes = {
-  setToken: PropTypes.func.isRequired
+  setToken: PropTypes.func.isRequired,
+  setLoggedUserId: PropTypes.func.isRequired
 }
 
 export default Login;

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import CreateArea from "./CreateArea";
 import Note from "./Note";
 
-function Dashboard() {
+function Dashboard({loggedUserId}) {
   const [notes, setNotes] = useState([]);
 
   function addNote(newNote) {
@@ -21,16 +21,18 @@ function Dashboard() {
 
   return (
     <div>
+      <h1>{loggedUserId}</h1>
       <CreateArea onAdd={addNote} />
       {notes.map((noteItem, index) => {
         return (
-          <Note
+            <Note
             key={index}
             id={index}
             title={noteItem.title}
             content={noteItem.content}
             onDelete={deleteNote}
           />
+          
         );
       })}
     </div>

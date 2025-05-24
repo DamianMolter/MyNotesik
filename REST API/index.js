@@ -28,11 +28,15 @@ app.use(cors());
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
-  console.log(email);
-  console.log(password);
-  res.send({
-    token: "test123",
-  });
+  const searchIndex = users.findIndex(
+    (user) => user.email === email && user.password === password
+  );
+  if (searchIndex >= 0) {
+    res.send({
+      token: "test123",
+      userId: users[searchIndex].id,
+    });
+  }
 });
 
 //CHALLENGE 1: GET All posts

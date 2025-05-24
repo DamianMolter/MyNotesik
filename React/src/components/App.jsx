@@ -7,12 +7,13 @@ import AuthContainer from "./AuthContainer";
 
 function App() {
   const [token, setToken] = useState("");
+  const [loggedUserId, setLoggedUserId] = useState(-1);
 
-  if (!token) {
+  if (!token && loggedUserId < 0) {
     return (
       <div>
         <Header />
-        <AuthContainer setToken={setToken} />
+        <AuthContainer setToken={setToken} setLoggedUserId={setLoggedUserId}/>
         <Footer />
       </div>
     );
@@ -23,7 +24,7 @@ function App() {
       <Header />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<Dashboard loggedUserId = {loggedUserId}/>} />
         </Routes>
       </BrowserRouter>
       <Footer />
