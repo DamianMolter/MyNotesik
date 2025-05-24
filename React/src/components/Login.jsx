@@ -18,6 +18,7 @@ function Login({openRegisterPage, setToken, setLoggedUserId}) {
 
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [loginError, setLoginError] = useState(false);
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -25,8 +26,11 @@ function Login({openRegisterPage, setToken, setLoggedUserId}) {
       email,
       password
     });
-    setToken(response.token);    
-    setLoggedUserId(response.userId);    
+    console.log(response);
+    const {token, userId, loginError} = response;
+    setToken(token);    
+    setLoggedUserId(userId);
+    setLoginError(loginError);
   }
 
   return (
@@ -37,6 +41,7 @@ function Login({openRegisterPage, setToken, setLoggedUserId}) {
           <input type="email" placeholder="Email" onChange={event => setEmail(event.target.value)}/>
           <input type="password" placeholder="Hasło" onChange={event => setPassword(event.target.value)}/>
           <button type="submit">Zaloguj się</button>
+          {loginError && <p style={{color: "red", fontWeight: "bold"}}>Podane dane logowania są nieprawidłowe!</p>}
           <p className="login-register-text">
             Nie masz konta?{" "}
             <a href="#" className="register-link" onClick={() => {openRegisterPage(false)}}>

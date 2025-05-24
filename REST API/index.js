@@ -28,6 +28,9 @@ app.use(cors());
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
+  console.log(email);
+  console.log(password);
+
   const searchIndex = users.findIndex(
     (user) => user.email === email && user.password === password
   );
@@ -35,6 +38,13 @@ app.post("/login", (req, res) => {
     res.send({
       token: "test123",
       userId: users[searchIndex].id,
+      loginError: false,
+    });
+  } else {
+    res.send({
+      token: "",
+      userId: -1,
+      loginError: true,
     });
   }
 });
