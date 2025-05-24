@@ -27,9 +27,9 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.post("/login", (req, res) => {
-  // const { email, password } = req.body;
-  // console.log(email);
-  // console.log(password);
+  const { email, password } = req.body;
+  console.log(email);
+  console.log(password);
   res.send({
     token: "test123",
   });

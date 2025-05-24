@@ -14,17 +14,18 @@ async function loginUser(credentials) {
 }
 
 
-function Login({setToken, openRegisterPage}) {
+function Login({openRegisterPage, setToken}) {
 
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
 
-  const handleSubmit = async event => {
-    event.preventDefault();
+  const handleSubmit = async e => {
+    e.preventDefault();
     const token = await loginUser({
       email,
       password
     });
+    console.log(token);
     setToken(token);
   }
 
