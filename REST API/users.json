@@ -1,22 +1,12 @@
 [
   {
     "id": 1,
-    "email": "damian.molter.programista@gmail.com",
-    "password": "123"
+    "email": "molterdamian@gmail.com",
+    "password": "$2b$08$l58LSBf34mzlNpQPCFEENuykYQlOI5kxxjLqU.JfdOyUltZF4JkaC"
   },
   {
     "id": 2,
     "email": "ada.czerw@wp.pl",
-    "password": "321"
-  },
-  {
-    "id": 3,
-    "email": "damian270992@gmail.com",
-    "password": "555"
-  },
-  {
-    "id": 4,
-    "email": "molterdamian@gmail.com",
-    "password": "$2b$08$AwjcAkdxXMGdapwZbTN2bOVeUF54/djrzX/M6qbamBM9kSY5NB08G"
+    "password": "$2b$08$CVEcJuAU9LlQoCl7fstkte/oUDvy17PWgwmxs3U7mPh.vLjLZWBQq"
   }
 ]

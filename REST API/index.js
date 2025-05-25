@@ -54,24 +54,35 @@ loadUsers();
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
-  console.log(email);
 
-  const searchIndex = users.findIndex(
-    (user) => user.email === email && user.password === password
-  );
-  if (searchIndex >= 0) {
-    res.send({
-      token: "test123",
-      userId: users[searchIndex].id,
-      loginError: false,
-    });
-  } else {
+  const searchIndex = users.findIndex((user) => user.email === email);
+
+  if (searchIndex < 0) {
     res.send({
       token: "",
       userId: -1,
       loginError: true,
     });
   }
+
+  const user = users[searchIndex];
+  const storedHashedPassword = user.password;
+
+  bcrypt.compare(password, storedHashedPassword, (err, result) => {
+    if (result) {
+      res.send({
+        token: "test123",
+        userId: users[searchIndex].id,
+        loginError: false,
+      });
+    } else {
+      res.send({
+        token: "",
+        userId: -1,
+        loginError: true,
+      });
+    }
+  });
 });
 
 app.post("/register", (req, res) => {
@@ -86,12 +97,14 @@ app.post("/register", (req, res) => {
       passwordConfirmFailed: true,
     });
   } else {
-    const newUserId = users[users.length - 1].id + 1;
+    var newUserId = 1;
+    if (users.length > 0) {
+      newUserId = users[users.length - 1].id + 1;
+    }
     bcrypt.hash(password, saltRounds, (err, hash) => {
       if (err) {
         console.log("Błąd hashowania hasła:", err);
       } else {
-        console.log(hash);
         let newUserData = {
           id: newUserId,
           email: email,
