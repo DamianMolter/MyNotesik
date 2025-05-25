@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import { use } from "react";
 
 
 async function registerUser(credentials) {
@@ -17,6 +18,9 @@ function Register({openLoginPage}) {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
+  const [emailOccupied, setEmailOccupied] = useState(false);
+  const [passwordConfirmFailed, setPasswordConfirmFailed] = useState(false);
+  const [registerSuccessfull, setRegisterSuccessfull] = useState(false);
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -26,10 +30,10 @@ function Register({openLoginPage}) {
       confirmPassword
     });
     console.log(response);
-    const {token, userId, loginError} = response;
-    setToken(token);    
-    setLoggedUserId(userId);
-    setLoginError(loginError);
+    const {emailOccupied, passwordConfirmFailed, registerSuccessfull} = response;
+    setEmailOccupied(emailOccupied);    
+    setPasswordConfirmFailed(passwordConfirmFailed);
+    setRegisterSuccessfull(registerSuccessfull);
   }
 
   return (
@@ -41,6 +45,9 @@ function Register({openLoginPage}) {
           <input type="password" placeholder="Hasło" onChange={event => {setPassword(event.target.value)}}/>
           <input type="password" placeholder="Potwierdź hasło" onChange={event => {setConfirmPassword(event.target.value)}}/>
           <button type="submit">Zarejestruj się</button>
+          {registerSuccessfull && <p style={{color: "green", fontWeight: "bold"}}>Twoje konto zostało założone pomyślnie</p>}
+          {passwordConfirmFailed && <p style={{color: "red", fontWeight: "bold"}}>Podane hasla nie są identyczne!</p>}
+          {emailOccupied && <p style={{color: "red", fontWeight: "bold"}}>Na podany adres email zostało już założone konto!</p>}
           <p className="login-register-text">
             Masz już konto?{" "}
             <a href="#" className="login-link" onClick={() => {openLoginPage(true)}}>

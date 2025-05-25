@@ -1,35 +1,59 @@
 import express, { response } from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import notes from "./Database/notes.js";
-import users from "./Database/users.js";
+import fs from "fs";
 
 const app = express();
 const port = 4000;
 
-// In-memory data store
-let posts = [
-  {
-    id: 1,
-    title: "The Rise of Decentralized Finance",
-    content:
-      "Decentralized Finance (DeFi) is an emerging and rapidly evolving field in the blockchain industry. It refers to the shift from traditional, centralized financial systems to peer-to-peer finance enabled by decentralized technologies built on Ethereum and other blockchains. With the promise of reduced dependency on the traditional banking sector, DeFi platforms offer a wide range of services, from lending and borrowing to insurance and trading.",
-    author: "Alex Thompson",
-    date: "2023-08-01T10:00:00Z",
-  },
-];
-
 let lastId = 1;
+let users = [];
+
+function loadUsers() {
+  try {
+    const rawData = fs.readFileSync("./users.json", "utf8");
+    users = JSON.parse(rawData);
+    console.log("Dane JSON wczytane pomyślnie.");
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      console.error(`Błąd: Plik users nie został znaleziony.`);
+      users = [];
+    } else if (error instanceof SyntaxError) {
+      console.error(`Błąd: Nieprawidłowy format JSON w pliku users.`);
+      users = [];
+    } else {
+      console.error(
+        "Wystąpił nieoczekiwany błąd podczas wczytywania pliku JSON:",
+        error
+      );
+      users = [];
+    }
+  }
+}
+
+function saveNewUser(data) {
+  try {
+    const jsonData = JSON.stringify(data, null, 2); // null i 2 dla ładniejszego formatowania JSON
+    fs.writeFile("./users.json", jsonData, "utf8", (err) => {
+      if (err) throw err;
+      console.log("The file has been saved!");
+    });
+    console.log("Dane JSON zapisane pomyślnie.");
+  } catch (error) {
+    console.error("Błąd podczas zapisu pliku JSON:", error);
+    throw error;
+  }
+}
 
 // Middleware
 app.use(bodyParser.json());
 //app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
+loadUsers();
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   console.log(email);
-  console.log(password);
 
   const searchIndex = users.findIndex(
     (user) => user.email === email && user.password === password
@@ -49,10 +73,36 @@ app.post("/login", (req, res) => {
   }
 });
 
+app.post("/register", (req, res) => {
+  const { email, password, confirmPassword } = req.body;
+  const searchIndex = users.findIndex((user) => user.email === email);
+  if (searchIndex >= 0) {
+    res.send({
+      emailOccupied: true,
+    });
+  } else if (password !== confirmPassword) {
+    res.send({
+      passwordConfirmFailed: true,
+    });
+  } else {
+    const newUserId = users[users.length - 1].id + 1;
+    let newUserData = {
+      id: newUserId,
+      email: email,
+      password: password,
+    };
+    users.push(newUserData);
+    saveNewUser(users);
+    res.send({
+      registerSuccessfull: true,
+    });
+  }
+});
+
 //CHALLENGE 1: GET All posts
 
 app.get("/", (req, res) => {
-  res.json(posts);
+  res.json(users);
 });
 
 //CHALLENGE 2: GET a specific post by id
