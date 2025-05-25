@@ -2,10 +2,11 @@ import express, { response } from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import fs from "fs";
+import bcrypt from "bcrypt";
 
 const app = express();
 const port = 4000;
-
+const saltRounds = 8;
 let lastId = 1;
 let users = [];
 
@@ -86,15 +87,22 @@ app.post("/register", (req, res) => {
     });
   } else {
     const newUserId = users[users.length - 1].id + 1;
-    let newUserData = {
-      id: newUserId,
-      email: email,
-      password: password,
-    };
-    users.push(newUserData);
-    saveNewUser(users);
-    res.send({
-      registerSuccessfull: true,
+    bcrypt.hash(password, saltRounds, (err, hash) => {
+      if (err) {
+        console.log("Błąd hashowania hasła:", err);
+      } else {
+        console.log(hash);
+        let newUserData = {
+          id: newUserId,
+          email: email,
+          password: hash,
+        };
+        users.push(newUserData);
+        saveNewUser(users);
+        res.send({
+          registerSuccessfull: true,
+        });
+      }
     });
   }
 });
