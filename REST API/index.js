@@ -1,31 +1,130 @@
-import express from "express";
+import express, { response } from "express";
 import bodyParser from "body-parser";
+import cors from "cors";
+import fs from "fs";
+import bcrypt from "bcrypt";
 
 const app = express();
 const port = 4000;
-
-// In-memory data store
-let posts = [
-  {
-    id: 1,
-    title: "The Rise of Decentralized Finance",
-    content:
-      "Decentralized Finance (DeFi) is an emerging and rapidly evolving field in the blockchain industry. It refers to the shift from traditional, centralized financial systems to peer-to-peer finance enabled by decentralized technologies built on Ethereum and other blockchains. With the promise of reduced dependency on the traditional banking sector, DeFi platforms offer a wide range of services, from lending and borrowing to insurance and trading.",
-    author: "Alex Thompson",
-    date: "2023-08-01T10:00:00Z",
-  },
-];
-
+const saltRounds = 8;
 let lastId = 1;
+let users = [];
+
+function loadUsers() {
+  try {
+    const rawData = fs.readFileSync("./users.json", "utf8");
+    users = JSON.parse(rawData);
+    console.log("Dane JSON wczytane pomyślnie.");
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      console.error(`Błąd: Plik users nie został znaleziony.`);
+      users = [];
+    } else if (error instanceof SyntaxError) {
+      console.error(`Błąd: Nieprawidłowy format JSON w pliku users.`);
+      users = [];
+    } else {
+      console.error(
+        "Wystąpił nieoczekiwany błąd podczas wczytywania pliku JSON:",
+        error
+      );
+      users = [];
+    }
+  }
+}
+
+function saveNewUser(data) {
+  try {
+    const jsonData = JSON.stringify(data, null, 2); // null i 2 dla ładniejszego formatowania JSON
+    fs.writeFile("./users.json", jsonData, "utf8", (err) => {
+      if (err) throw err;
+      console.log("The file has been saved!");
+    });
+    console.log("Dane JSON zapisane pomyślnie.");
+  } catch (error) {
+    console.error("Błąd podczas zapisu pliku JSON:", error);
+    throw error;
+  }
+}
 
 // Middleware
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+//app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
+loadUsers();
+
+app.post("/login", (req, res) => {
+  const { email, password } = req.body;
+
+  const searchIndex = users.findIndex((user) => user.email === email);
+
+  if (searchIndex < 0) {
+    res.send({
+      token: "",
+      userId: -1,
+      loginError: true,
+    });
+  }
+
+  const user = users[searchIndex];
+  const storedHashedPassword = user.password;
+
+  bcrypt.compare(password, storedHashedPassword, (err, result) => {
+    if (result) {
+      res.send({
+        token: "test123",
+        userId: users[searchIndex].id,
+        userEmail: users[searchIndex].email,
+        loginError: false,
+      });
+    } else {
+      res.send({
+        token: "",
+        userId: -1,
+        loginError: true,
+      });
+    }
+  });
+});
+
+app.post("/register", (req, res) => {
+  const { email, password, confirmPassword } = req.body;
+  const searchIndex = users.findIndex((user) => user.email === email);
+  if (searchIndex >= 0) {
+    res.send({
+      emailOccupied: true,
+    });
+  } else if (password !== confirmPassword) {
+    res.send({
+      passwordConfirmFailed: true,
+    });
+  } else {
+    var newUserId = 1;
+    if (users.length > 0) {
+      newUserId = users[users.length - 1].id + 1;
+    }
+    bcrypt.hash(password, saltRounds, (err, hash) => {
+      if (err) {
+        console.log("Błąd hashowania hasła:", err);
+      } else {
+        let newUserData = {
+          id: newUserId,
+          email: email,
+          password: hash,
+        };
+        users.push(newUserData);
+        saveNewUser(users);
+        res.send({
+          registerSuccessfull: true,
+        });
+      }
+    });
+  }
+});
 
 //CHALLENGE 1: GET All posts
 
 app.get("/", (req, res) => {
-  res.json(posts);
+  res.json(users);
 });
 
 //CHALLENGE 2: GET a specific post by id

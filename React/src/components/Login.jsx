@@ -1,19 +1,51 @@
-import React from "react";
-import axios from 
+import React, {useState} from "react";
+import axios from "axios"
+import PropTypes from "prop-types";
 
-function Login(props) {
+async function loginUser(credentials) {
+ return fetch('http://localhost:4000/login', {
+   method: 'POST',
+   headers: {
+     'Content-Type': 'application/json'
+   },
+   body: JSON.stringify(credentials)
+ })
+   .then(data => data.json())
+}
+
+
+function Login({openRegisterPage, setToken, setLoggedUserId, setLoggedUserEmail}) {
+
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const [loginError, setLoginError] = useState(false);
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    const response = await loginUser({
+      email,
+      password
+    });
+    //console.log(response);
+    const {token, userId, userEmail, loginError} = response;
+    setToken(token);    
+    setLoggedUserId(userId);
+    setLoggedUserEmail(userEmail);
+    setLoginError(loginError);
+  }
 
   return (
     <div className="loginContainer">
-      <div class="loginPanel">
+      <div className="loginPanel">
         <h1>Logowanie</h1>
-        <form class="loginForm">
-          <input type="email" placeholder="Email" />
-          <input type="password" placeholder="Hasło" />
+        <form className="loginForm" onSubmit={handleSubmit}>
+          <input type="email" placeholder="Email" onChange={event => setEmail(event.target.value)}/>
+          <input type="password" placeholder="Hasło" onChange={event => setPassword(event.target.value)}/>
           <button type="submit">Zaloguj się</button>
-          <p class="login-register-text">
+          {loginError && <p style={{color: "red", fontWeight: "bold"}}>Podane dane logowania są nieprawidłowe!</p>}
+          <p className="login-register-text">
             Nie masz konta?{" "}
-            <a href="#" class="register-link" onClick={() => {props.openRegisterPage(false)}}>
+            <a href="#" className="register-link" onClick={() => {openRegisterPage(false)}}>
               Zarejestruj się
             </a>
           </p>
@@ -21,6 +53,11 @@ function Login(props) {
       </div>
     </div>
   );
+}
+
+Login.propTypes = {
+  setToken: PropTypes.func.isRequired,
+  setLoggedUserId: PropTypes.func.isRequired
 }
 
 export default Login;

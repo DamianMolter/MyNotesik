@@ -198,6 +198,56 @@ form.create-note button {
   padding: 20px;
 }
 
+.user-panel-container{
+  display: flex;
+  justify-content: end;
+  padding-left: 20px;
+  padding-right: 20px;
+  }
+
+.user-panel {
+        background: #fff;
+        border-radius: 7px;
+        box-shadow: 0 2px 5px #ccc;
+        padding: 15px;
+        width: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 5px;
+        margin-left: auto;
+        margin-right: 20px;
+      }
+
+      .user-info {
+        flex-grow: 1;
+        text-align: center;
+      }
+
+      .user-info p {
+        font-size: 1em;
+        margin-bottom: 5px;
+        color: #333;
+      }
+
+      .logout-button {
+        background: #f5ba13;
+        color: #fff;
+        border: none;
+        border-radius: 7px;
+        padding: 8px 15px;
+        font-size: 0.9em;
+        font-family: inherit;
+        cursor: pointer;
+        outline: none;
+        transition: background-color 0.3s ease;
+      }
+
+      .logout-button:hover {
+        background-color: #e0a70e;
+      }
+
 @media (max-width: 400px) {
   .loginPanel,
   .registerPanel {
