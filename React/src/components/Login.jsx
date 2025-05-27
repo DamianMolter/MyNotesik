@@ -14,7 +14,7 @@ async function loginUser(credentials) {
 }
 
 
-function Login({openRegisterPage, setToken, setLoggedUserId}) {
+function Login({openRegisterPage, setToken, setLoggedUserId, setLoggedUserEmail}) {
 
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
@@ -27,9 +27,10 @@ function Login({openRegisterPage, setToken, setLoggedUserId}) {
       password
     });
     //console.log(response);
-    const {token, userId, loginError} = response;
+    const {token, userId, userEmail, loginError} = response;
     setToken(token);    
     setLoggedUserId(userId);
+    setLoggedUserEmail(userEmail);
     setLoginError(loginError);
   }
 

@@ -73,6 +73,7 @@ app.post("/login", (req, res) => {
       res.send({
         token: "test123",
         userId: users[searchIndex].id,
+        userEmail: users[searchIndex].email,
         loginError: false,
       });
     } else {
