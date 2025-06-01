@@ -6,7 +6,8 @@ import Dashboard from "./Dashboard";
 import AuthContainer from "./AuthContainer";
 
 function App() {
-  const [token, setToken] = useState("");
+  const [token, setToken]  = useState("");
+
   const [loggedUserId, setLoggedUserId] = useState(-1);
   const [loggedUserEmail, setLoggedUserEmail] = useState("");
 
