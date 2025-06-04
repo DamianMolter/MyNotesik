@@ -2,10 +2,7 @@ import { useState } from "react";
 
 export default function useLoggedUserId() {
   const getLoggedUserId = () => {
-    const loggedUserIdString = localStorage.getItem("loggedUserId");
-    console.log(loggedUserIdString);
-    const userId = JSON.parse(loggedUserIdString);
-    console.log(userId);
+    const userId = localStorage.getItem("loggedUserId");
     return userId;
   };
   const [loggedUserId, setLoggedUserId] = useState(getLoggedUserId());

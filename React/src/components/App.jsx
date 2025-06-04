@@ -6,12 +6,13 @@ import Dashboard from "./Dashboard";
 import AuthContainer from "./AuthContainer";
 import useToken from './useToken';
 import useLoggedUserId from "./useLoggedUserId";
+import useLoggedUserEmail from "./useLoggedUserEmail";
 
 function App() {
   const {token, setToken}  = useToken();
 
   const {loggedUserId, setLoggedUserId} = useLoggedUserId();
-  const [loggedUserEmail, setLoggedUserEmail] = useState("");
+  const{loggedUserEmail, setLoggedUserEmail} = useLoggedUserEmail();
 
   if (!token) {
     return (
