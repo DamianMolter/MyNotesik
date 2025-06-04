@@ -32,6 +32,7 @@ function Login({openRegisterPage, setToken, setLoggedUserId, setLoggedUserEmail}
     setLoggedUserId(userId);
     setLoggedUserEmail(userEmail);
     setLoginError(loginError);
+    //window.location.reload();
   }
 
   return (
