@@ -5,11 +5,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./Dashboard";
 import AuthContainer from "./AuthContainer";
 import useToken from './useToken';
+import useLoggedUserId from "./useLoggedUserId";
 
 function App() {
   const {token, setToken}  = useToken();
 
-  const [loggedUserId, setLoggedUserId] = useState(-1);
+  const {loggedUserId, setLoggedUserId} = useLoggedUserId();
   const [loggedUserEmail, setLoggedUserEmail] = useState("");
 
   if (!token) {
