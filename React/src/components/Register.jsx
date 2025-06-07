@@ -10,7 +10,7 @@ async function registerUser(credentials) {
    },
    body: JSON.stringify(credentials)
  })
-   .then(data => data.json())
+   .then((data) => data.json())
 }
 
 function Register({openLoginPage}) {

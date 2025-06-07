@@ -9,6 +9,7 @@ const port = 4000;
 const saltRounds = 8;
 let lastId = 1;
 let users = [];
+let notes = [];
 
 function loadUsers() {
   try {
@@ -32,12 +33,48 @@ function loadUsers() {
   }
 }
 
+function loadNotes() {
+  try {
+    const rawData = fs.readFileSync("./notes.json", "utf8");
+    notes = JSON.parse(rawData);
+    console.log("Dane JSON wczytane pomyślnie.");
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      console.error(`Błąd: Plik notes nie został znaleziony.`);
+      users = [];
+    } else if (error instanceof SyntaxError) {
+      console.error(`Błąd: Nieprawidłowy format JSON w pliku notes.`);
+      users = [];
+    } else {
+      console.error(
+        "Wystąpił nieoczekiwany błąd podczas wczytywania pliku JSON:",
+        error
+      );
+      notes = [];
+    }
+  }
+}
+
 function saveNewUser(data) {
   try {
     const jsonData = JSON.stringify(data, null, 2); // null i 2 dla ładniejszego formatowania JSON
     fs.writeFile("./users.json", jsonData, "utf8", (err) => {
       if (err) throw err;
-      console.log("The file has been saved!");
+      console.log("Plik zapisany pomyślnie!");
+    });
+    console.log("Dane JSON zapisane pomyślnie.");
+  } catch (error) {
+    console.error("Błąd podczas zapisu pliku JSON:", error);
+    throw error;
+  }
+}
+
+function saveNewNote(data) {
+  try {
+    const jsonData = JSON.stringify(data, null, 2); // null i 2 dla ładniejszego formatowania JSON
+    fs.writeFile("./notes.json", jsonData, "utf8", (err) => {
+      if (err) throw err;
+      console.log("Plik zapisany pomyślnie!");
     });
     console.log("Dane JSON zapisane pomyślnie.");
   } catch (error) {
@@ -51,6 +88,7 @@ app.use(bodyParser.json());
 //app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 loadUsers();
+loadNotes();
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
@@ -119,6 +157,26 @@ app.post("/register", (req, res) => {
       }
     });
   }
+});
+
+app.post("/saveNote", (req, res) => {
+  var newId = 1;
+  if (notes.length > 0) {
+    newId = notes[notes.length - 1].id + 1;
+  }
+  const userId = req.body.userId;
+  const title = req.body.title;
+  const content = req.body.content;
+  const newNote = {
+    id: newId,
+    userId: userId,
+    title: title,
+    content: content,
+  };
+  console.log(newNote);
+  notes.push(newNote);
+  saveNewNote(notes);
+  res.status(201).json(newNote);
 });
 
 //CHALLENGE 1: GET All posts

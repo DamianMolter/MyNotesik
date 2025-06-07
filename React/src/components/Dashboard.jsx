@@ -37,7 +37,7 @@ function Dashboard({
         setLoggedUserEmail={setLoggedUserEmail}
       />
 
-      <CreateArea onAdd={addNote} />
+      <CreateArea onAdd={addNote} loggedUserId={loggedUserId} />
       {notes.map((noteItem, index) => {
         return (
           <Note
