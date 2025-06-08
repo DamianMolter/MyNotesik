@@ -49,9 +49,6 @@ function CreateArea({ onAdd, loggedUserId }) {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    console.log(note.userId);
-    console.log(note.title);
-    console.log(note.content);
     const response = await saveNote({
       userId: note.userId,
       title: note.title,

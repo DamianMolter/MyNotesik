@@ -173,10 +173,28 @@ app.post("/saveNote", (req, res) => {
     title: title,
     content: content,
   };
-  console.log(newNote);
   notes.push(newNote);
   saveNewNote(notes);
   res.status(201).json(newNote);
+});
+
+app.get("/loadNotes/:userId", (req, res) => {
+  const loggedUserId = req.params.userId;
+  const result = notes.filter((note) => note.userId == loggedUserId);
+  res.send(result);
+});
+
+app.delete("/deleteNote/:id", (req, res) => {
+  const noteId = req.params.id;
+  const searchIndex = notes.findIndex((note) => note.id === noteId);
+  if (searchIndex > -1) {
+    notes.splice(searchIndex, 1);
+    res.sendStatus(200);
+  } else {
+    res
+      .status(404)
+      .json({ error: `Notatka z id równym ${id} nie znaleziona.` });
+  }
 });
 
 //CHALLENGE 1: GET All posts

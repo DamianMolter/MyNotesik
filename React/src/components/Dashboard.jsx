@@ -1,7 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import UserPanel from "./UserPanel";
 import CreateArea from "./CreateArea";
 import Note from "./Note";
+
+async function getNotes(loggedUserId) {
+  return fetch(`http://localhost:4000/loadNotes/${loggedUserId}`)
+    .then(data => data.json())
+}
 
 function Dashboard({
   loggedUserId,
@@ -26,6 +31,17 @@ function Dashboard({
     });
   }
 
+  useEffect(() => {
+   let mounted = true;
+   getNotes(loggedUserId)
+     .then(items => {
+       if(mounted) {
+         setNotes(items);
+       }
+     })
+   return () => mounted = false;
+ }, [])
+
   return (
     <div>
       <h1>{loggedUserId}</h1>
@@ -38,11 +54,11 @@ function Dashboard({
       />
 
       <CreateArea onAdd={addNote} loggedUserId={loggedUserId} />
-      {notes.map((noteItem, index) => {
+      {notes.map((noteItem) => {
         return (
           <Note
-            key={index}
-            id={index}
+            key={noteItem.id}
+            id={noteItem.id}
             title={noteItem.title}
             content={noteItem.content}
             onDelete={deleteNote}
