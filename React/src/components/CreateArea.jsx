@@ -16,7 +16,8 @@ async function saveNote(note) {
 function CreateArea({ onAdd, loggedUserId }) {
   const [isExpanded, setExpanded] = useState(false);
 
-  const [note, setNote] = useState({
+  let [note, setNote] = useState({
+    id: 0,
     userId: loggedUserId,
     title: "",
     content: "",
@@ -33,34 +34,19 @@ function CreateArea({ onAdd, loggedUserId }) {
     });
   }
 
-  function submitNote(event) {
-    onAdd(note);
-    setNote({
-      userId: loggedUserId,
-      title: "",
-      content: "",
-    });
-    event.preventDefault();
-  }
-
   function expand() {
     setExpanded(true);
   }
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const response = await saveNote({
+    const newNote = await saveNote({
       userId: note.userId,
       title: note.title,
       content: note.content
     });
-    onAdd(note);
-    setNote({
-      userId: loggedUserId,
-      title: "",
-      content: "",
-    });
-    console.log(response);
+    onAdd(newNote);
+    setNote(newNote);
   }
 
   return (

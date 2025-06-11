@@ -175,7 +175,8 @@ app.post("/saveNote", (req, res) => {
   };
   notes.push(newNote);
   saveNewNote(notes);
-  res.status(201).json(newNote);
+  console.log(newNote);
+  res.send(newNote);
 });
 
 app.get("/loadNotes/:userId", (req, res) => {
@@ -186,14 +187,15 @@ app.get("/loadNotes/:userId", (req, res) => {
 
 app.delete("/deleteNote/:id", (req, res) => {
   const noteId = req.params.id;
-  const searchIndex = notes.findIndex((note) => note.id === noteId);
+  console.log(noteId);
+  const searchIndex = notes.findIndex((note) => note.id == noteId);
   if (searchIndex > -1) {
     notes.splice(searchIndex, 1);
-    res.sendStatus(200);
+    saveNewNote(notes);
   } else {
     res
       .status(404)
-      .json({ error: `Notatka z id równym ${id} nie znaleziona.` });
+      .json({ error: `Notatka z id równym ${noteId} nie znaleziona.` });
   }
 });
 

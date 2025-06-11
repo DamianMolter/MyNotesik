@@ -4,8 +4,18 @@ import CreateArea from "./CreateArea";
 import Note from "./Note";
 
 async function getNotes(loggedUserId) {
-  return fetch(`http://localhost:4000/loadNotes/${loggedUserId}`)
-    .then(data => data.json())
+  return fetch(`http://localhost:4000/loadNotes/${loggedUserId}`).then((data) =>
+    data.json()
+  );
+}
+
+function sendDeleteNoteRequest(id) {
+  return fetch(`http://localhost:4000/deleteNote/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((data) => data.json());
 }
 
 function Dashboard({
@@ -24,6 +34,7 @@ function Dashboard({
   }
 
   function deleteNote(id) {
+    sendDeleteNoteRequest(id);
     setNotes((prevNotes) => {
       return prevNotes.filter((noteItem, index) => {
         return index !== id;
@@ -32,15 +43,14 @@ function Dashboard({
   }
 
   useEffect(() => {
-   let mounted = true;
-   getNotes(loggedUserId)
-     .then(items => {
-       if(mounted) {
-         setNotes(items);
-       }
-     })
-   return () => mounted = false;
- }, [])
+    let mounted = true;
+    getNotes(loggedUserId).then((items) => {
+      if (mounted) {
+        setNotes(items);
+      }
+    });
+    return () => (mounted = false);
+  }, []);
 
   return (
     <div>
