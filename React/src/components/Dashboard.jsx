@@ -9,7 +9,7 @@ async function getNotes(loggedUserId) {
   );
 }
 
-function sendDeleteNoteRequest(id) {
+async function sendDeleteNoteRequest(id) {
   return fetch(`http://localhost:4000/deleteNote/${id}`, {
     method: "DELETE",
     headers: {
@@ -33,11 +33,11 @@ function Dashboard({
     });
   }
 
-  function deleteNote(id) {
-    sendDeleteNoteRequest(id);
-    setNotes((prevNotes) => {
-      return prevNotes.filter((noteItem, index) => {
-        return index !== id;
+  const deleteNote = async (id) => {
+    const result = await sendDeleteNoteRequest(id);
+    setNotes(prevNotes => {
+      return prevNotes.filter((noteItem) => {
+        return noteItem.id !== id;
       });
     });
   }

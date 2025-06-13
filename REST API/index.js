@@ -186,12 +186,13 @@ app.get("/loadNotes/:userId", (req, res) => {
 });
 
 app.delete("/deleteNote/:id", (req, res) => {
-  const noteId = req.params.id;
+  const noteId = parseInt(req.params.id);
   console.log(noteId);
-  const searchIndex = notes.findIndex((note) => note.id == noteId);
+  const searchIndex = notes.findIndex((note) => note.id === noteId);
   if (searchIndex > -1) {
     notes.splice(searchIndex, 1);
     saveNewNote(notes);
+    res.send({ alert: "Notatka usunięta pomyślnie!" });
   } else {
     res
       .status(404)
@@ -202,7 +203,7 @@ app.delete("/deleteNote/:id", (req, res) => {
 //CHALLENGE 1: GET All posts
 
 app.get("/", (req, res) => {
-  res.json(users);
+  res.json(notes);
 });
 
 //CHALLENGE 2: GET a specific post by id

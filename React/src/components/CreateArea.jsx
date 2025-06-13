@@ -46,7 +46,12 @@ function CreateArea({ onAdd, loggedUserId }) {
       content: note.content
     });
     onAdd(newNote);
-    setNote(newNote);
+    setNote({
+    id: 0,
+    userId: loggedUserId,
+    title: "",
+    content: "",
+  });
   }
 
   return (
