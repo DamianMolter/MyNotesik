@@ -17,7 +17,6 @@ function Note(props) {
 
   function handleEdit() {
     props.setEditNote(note.id);
-    
   }
 
   if (props.editNote === props.id) {

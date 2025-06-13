@@ -3,7 +3,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from "@mui/icons-material/Cancel";
 
 async function saveEditedNote (editedNote){
-  return fetch(`http://localhost:4000/editNote`, {
+  return fetch(`http://localhost:4000/notes`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -14,18 +14,24 @@ async function saveEditedNote (editedNote){
 
 function EditNote(props) {
 
+  const [newNote, setNewNote] = useState({
+    id: props.note.id,
+    userId: props.note.userId,
+    title: props.note.title,
+    content: props.note.content
+  })
+
   const handleSubmit = async e => {
     e.preventDefault();
-    console.log(props.note.id);
-    const result = await saveEditedNote(props.note);
+    const result = await saveEditedNote(newNote);
     console.log(result);
     props.setEditNote(0);
+    props.setNote(newNote);
   }
 
   function handleChange(event) {
     const { name, value } = event.target;
-
-    props.setNote((prevNote) => {
+    setNewNote((prevNote) => {
       return {
         ...prevNote,
         [name]: value,
@@ -33,8 +39,10 @@ function EditNote(props) {
     });
   }
 
-  function cancelEdit() {
+  const cancelEdit = e => {
+    e.preventDefault();
     props.setEditNote(0);
+    setNewNote(props.note);
   }
 
   return (
@@ -56,7 +64,7 @@ function EditNote(props) {
           onChange={handleChange}
         ></textarea>
         <div className="form-buttons">
-          <button type="button" onClick={cancelEdit}>
+          <button type="reset" onClick={cancelEdit}>
             <CancelIcon />
           </button>
           <button type="submit">

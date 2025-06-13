@@ -4,13 +4,13 @@ import CreateArea from "./CreateArea";
 import Note from "./Note";
 
 async function getNotes(loggedUserId) {
-  return fetch(`http://localhost:4000/loadNotes/${loggedUserId}`).then((data) =>
+  return fetch(`http://localhost:4000/notes/${loggedUserId}`).then((data) =>
     data.json()
   );
 }
 
 async function sendDeleteNoteRequest(id) {
-  return fetch(`http://localhost:4000/deleteNote/${id}`, {
+  return fetch(`http://localhost:4000/notes/${id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",

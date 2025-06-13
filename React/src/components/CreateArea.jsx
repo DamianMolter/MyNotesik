@@ -4,8 +4,8 @@ import { Fab } from "@mui/material";
 import { Zoom } from "@mui/material";
 
 async function saveNote(note) {
-  return fetch("http://localhost:4000/saveNote", {
-    method: "POST",
+  return fetch("http://localhost:4000/notes", {
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },

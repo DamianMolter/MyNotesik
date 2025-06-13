@@ -159,7 +159,7 @@ app.post("/register", (req, res) => {
   }
 });
 
-app.post("/saveNote", (req, res) => {
+app.put("/notes", (req, res) => {
   var newId = 1;
   if (notes.length > 0) {
     newId = notes[notes.length - 1].id + 1;
@@ -179,13 +179,13 @@ app.post("/saveNote", (req, res) => {
   res.send(newNote);
 });
 
-app.get("/loadNotes/:userId", (req, res) => {
+app.get("/notes/:userId", (req, res) => {
   const loggedUserId = req.params.userId;
   const result = notes.filter((note) => note.userId == loggedUserId);
   res.send(result);
 });
 
-app.delete("/deleteNote/:id", (req, res) => {
+app.delete("/notes/:id", (req, res) => {
   const noteId = parseInt(req.params.id);
   console.log(noteId);
   const searchIndex = notes.findIndex((note) => note.id === noteId);
@@ -200,7 +200,7 @@ app.delete("/deleteNote/:id", (req, res) => {
   }
 });
 
-app.patch("/editNote", (req, res) => {
+app.patch("/notes", (req, res) => {
   const existingNote = notes.find((note) => note.id === req.body.id);
   const newNote = {
     id: existingNote.id,
