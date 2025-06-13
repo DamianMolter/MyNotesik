@@ -55,7 +55,7 @@ function loadNotes() {
   }
 }
 
-function saveNewUser(data) {
+function saveUsersToFile(data) {
   try {
     const jsonData = JSON.stringify(data, null, 2); // null i 2 dla ładniejszego formatowania JSON
     fs.writeFile("./users.json", jsonData, "utf8", (err) => {
@@ -69,7 +69,7 @@ function saveNewUser(data) {
   }
 }
 
-function saveNewNote(data) {
+function saveNotesToFile(data) {
   try {
     const jsonData = JSON.stringify(data, null, 2); // null i 2 dla ładniejszego formatowania JSON
     fs.writeFile("./notes.json", jsonData, "utf8", (err) => {
@@ -150,7 +150,7 @@ app.post("/register", (req, res) => {
           password: hash,
         };
         users.push(newUserData);
-        saveNewUser(users);
+        saveUsersToFile(users);
         res.send({
           registerSuccessfull: true,
         });
@@ -174,7 +174,7 @@ app.post("/saveNote", (req, res) => {
     content: content,
   };
   notes.push(newNote);
-  saveNewNote(notes);
+  saveNotesToFile(notes);
   console.log(newNote);
   res.send(newNote);
 });
@@ -191,13 +191,27 @@ app.delete("/deleteNote/:id", (req, res) => {
   const searchIndex = notes.findIndex((note) => note.id === noteId);
   if (searchIndex > -1) {
     notes.splice(searchIndex, 1);
-    saveNewNote(notes);
+    saveNotesToFile(notes);
     res.send({ alert: "Notatka usunięta pomyślnie!" });
   } else {
     res
       .status(404)
       .json({ error: `Notatka z id równym ${noteId} nie znaleziona.` });
   }
+});
+
+app.patch("/editNote", (req, res) => {
+  const existingNote = notes.find((note) => note.id === req.body.id);
+  const newNote = {
+    id: existingNote.id,
+    userId: existingNote.userId,
+    title: req.body.title || existingNote.title,
+    content: req.body.content || existingNote.content,
+  };
+  const searchIndex = notes.findIndex((note) => note.id === req.body.id);
+  notes[searchIndex] = newNote;
+  saveNotesToFile(notes);
+  res.send({ alert: "Notatka edytowana pomyślnie!" });
 });
 
 //CHALLENGE 1: GET All posts

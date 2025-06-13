@@ -62,7 +62,7 @@ function CreateArea({ onAdd, loggedUserId }) {
             name="title"
             onChange={handleChange}
             value={note.title}
-            placeholder="Title"
+            placeholder="Tytuł..."
           />
         )}
 
@@ -71,7 +71,7 @@ function CreateArea({ onAdd, loggedUserId }) {
           onClick={expand}
           onChange={handleChange}
           value={note.content}
-          placeholder="Take a note..."
+          placeholder="Treść notatki..."
           rows={isExpanded ? 3 : 1}
         />
         <Zoom in={isExpanded}>

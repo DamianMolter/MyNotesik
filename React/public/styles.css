@@ -257,67 +257,71 @@ form.create-note button {
 }
 
 .edit-note-form {
-            background: #fff;
-            border-radius: 7px;
-            box-shadow: 0 2px 5px #ccc; /* Matched .note's shadow */
-            padding: 10px; /* Matched .note */
-            width: 240px; /* Matched .note */
-            margin: 16px; /* Matched .note */
-            float: left; /* Matched .note */
-            position: relative; /* Kept for the button's absolute positioning */
-            display: flex; /* Flexbox for internal layout */
-            flex-direction: column; /* Stack elements vertically */
-        }
+  background: #fff;
+  border-radius: 7px;
+  box-shadow: 0 2px 5px #ccc; /* Matched .note's shadow */
+  padding: 10px; /* Matched .note */
+  width: 240px; /* Matched .note */
+  margin: 16px; /* Matched .note */
+  float: left; /* Matched .note */
+  position: relative; /* Kept for the button's absolute positioning */
+  display: flex; /* Flexbox for internal layout */
+  flex-direction: column; /* Stack elements vertically */
+}
 
-        .edit-note-form input,
-        .edit-note-form textarea {
-            width: 100%;
-            border: none;
-            padding: 4px;
-            outline: none;
-            font-size: 1.2em;
-            font-family: inherit;
-            resize: none;
-            margin-bottom: 10px; /* Add some space below inputs */
-        }
+.edit-note-form input,
+.edit-note-form textarea {
+  width: 100%;
+  border: none;
+  padding: 4px;
+  outline: none;
+  font-size: 1.2em;
+  font-family: inherit;
+  resize: none;
+  margin-bottom: 10px; /* Add some space below inputs */
+}
 
-        /* Container for the buttons */
-        .edit-note-form .form-buttons {
-            display: flex;
-            justify-content: flex-end; /* Align buttons to the right */
-            gap: 8px; /* Space between buttons */
-            margin-top: 10px; /* Space above buttons */
-        }
+.edit-note-form input{
+  font-weight: bold;
+}
 
-        /* Styles for the buttons within the form-buttons container */
-        .edit-note-form .form-buttons button {
-            background: #f5ba13;
-            color: #fff;
-            border: none;
-            border-radius: 7px; /* Slightly rounded rectangular buttons */
-            padding: 8px 12px;
-            font-size: 0.9em;
-            font-family: inherit;
-            cursor: pointer;
-            outline: none;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Keep subtle shadow */
-            transition: background-color 0.3s ease;
-            position: static; /* Override previous absolute positioning */
-            right: auto; /* Reset right */
-            bottom: auto; /* Reset bottom */
-            width: auto; /* Reset width to auto */
-            height: auto; /* Reset height to auto */
-            display: flex; /* Enable flexbox for icon and text alignment */
-            align-items: center;
-            gap: 5px; /* Space between icon and text */
-        }
+/* Container for the buttons */
+.edit-note-form .form-buttons {
+  display: flex;
+  justify-content: flex-end; /* Align buttons to the right */
+  gap: 8px; /* Space between buttons */
+  margin-top: 10px; /* Space above buttons */
+}
 
-        .edit-note-form .form-buttons button:hover {
-            background: #e0a70e;
-        }
+/* Styles for the buttons within the form-buttons container */
+.edit-note-form .form-buttons button {
+  background: #f5ba13;
+  color: #fff;
+  border: none;
+  border-radius: 7px; /* Slightly rounded rectangular buttons */
+  padding: 8px 12px;
+  font-size: 0.9em;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Keep subtle shadow */
+  transition: background-color 0.3s ease;
+  position: static; /* Override previous absolute positioning */
+  right: auto; /* Reset right */
+  bottom: auto; /* Reset bottom */
+  width: auto; /* Reset width to auto */
+  height: auto; /* Reset height to auto */
+  display: flex; /* Enable flexbox for icon and text alignment */
+  align-items: center;
+  gap: 5px; /* Space between icon and text */
+}
 
-        .edit-note-form .form-buttons button svg {
-            fill: #fff; /* Ensure SVG icon color is white */
-            width: 18px; /* Adjust SVG size */
-            height: 18px; /* Adjust SVG size */
-        }
+.edit-note-form .form-buttons button:hover {
+  background: #e0a70e;
+}
+
+.edit-note-form .form-buttons button svg {
+  fill: #fff; /* Ensure SVG icon color is white */
+  width: 18px; /* Adjust SVG size */
+  height: 18px; /* Adjust SVG size */
+}
