@@ -26,7 +26,6 @@ function Login({openRegisterPage, setToken, setLoggedUserId, setLoggedUserEmail}
       email,
       password
     });
-    //console.log(response);
     const {token, userId, userEmail, loginError} = response;
     setToken(token);    
     setLoggedUserId(userId);

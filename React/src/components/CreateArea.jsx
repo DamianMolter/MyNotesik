@@ -3,10 +3,22 @@ import AddIcon from "@mui/icons-material/Add";
 import { Fab } from "@mui/material";
 import { Zoom } from "@mui/material";
 
-function CreateArea(props) {
+async function saveNote(note) {
+  return fetch("http://localhost:4000/notes", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(note),
+  }).then((data) => data.json());
+}
+
+function CreateArea({ onAdd, loggedUserId }) {
   const [isExpanded, setExpanded] = useState(false);
 
-  const [note, setNote] = useState({
+  let [note, setNote] = useState({
+    id: 0,
+    userId: loggedUserId,
     title: "",
     content: "",
   });
@@ -22,28 +34,35 @@ function CreateArea(props) {
     });
   }
 
-  function submitNote(event) {
-    props.onAdd(note);
-    setNote({
-      title: "",
-      content: "",
-    });
-    event.preventDefault();
-  }
-
   function expand() {
     setExpanded(true);
   }
 
+  const handleSubmit = async e => {
+    e.preventDefault();
+    const newNote = await saveNote({
+      userId: note.userId,
+      title: note.title,
+      content: note.content
+    });
+    onAdd(newNote);
+    setNote({
+    id: 0,
+    userId: loggedUserId,
+    title: "",
+    content: "",
+  });
+  }
+
   return (
     <div>
-      <form className="create-note">
+      <form className="create-note" onSubmit={handleSubmit}>
         {isExpanded && (
           <input
             name="title"
             onChange={handleChange}
             value={note.title}
-            placeholder="Title"
+            placeholder="Tytuł..."
           />
         )}
 
@@ -52,11 +71,11 @@ function CreateArea(props) {
           onClick={expand}
           onChange={handleChange}
           value={note.content}
-          placeholder="Take a note..."
+          placeholder="Treść notatki..."
           rows={isExpanded ? 3 : 1}
         />
         <Zoom in={isExpanded}>
-          <Fab onClick={submitNote}>
+          <Fab type="submit">
             <AddIcon />
           </Fab>
         </Zoom>

@@ -101,7 +101,7 @@ form.create-note button {
 }
 
 .loginContainer {
-  display:flex;
+  display: flex;
   justify-content: center;
   align-items: center;
   height: 80vh;
@@ -198,55 +198,55 @@ form.create-note button {
   padding: 20px;
 }
 
-.user-panel-container{
+.user-panel-container {
   display: flex;
   justify-content: end;
   padding-left: 20px;
   padding-right: 20px;
-  }
+}
 
 .user-panel {
-        background: #fff;
-        border-radius: 7px;
-        box-shadow: 0 2px 5px #ccc;
-        padding: 15px;
-        width: 300px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        margin-top: 5px;
-        margin-left: auto;
-        margin-right: 20px;
-      }
+  background: #fff;
+  border-radius: 7px;
+  box-shadow: 0 2px 5px #ccc;
+  padding: 15px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 5px;
+  margin-left: auto;
+  margin-right: 20px;
+}
 
-      .user-info {
-        flex-grow: 1;
-        text-align: center;
-      }
+.user-info {
+  flex-grow: 1;
+  text-align: center;
+}
 
-      .user-info p {
-        font-size: 1em;
-        margin-bottom: 5px;
-        color: #333;
-      }
+.user-info p {
+  font-size: 1em;
+  margin-bottom: 5px;
+  color: #333;
+}
 
-      .logout-button {
-        background: #f5ba13;
-        color: #fff;
-        border: none;
-        border-radius: 7px;
-        padding: 8px 15px;
-        font-size: 0.9em;
-        font-family: inherit;
-        cursor: pointer;
-        outline: none;
-        transition: background-color 0.3s ease;
-      }
+.logout-button {
+  background: #f5ba13;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 8px 15px;
+  font-size: 0.9em;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.3s ease;
+}
 
-      .logout-button:hover {
-        background-color: #e0a70e;
-      }
+.logout-button:hover {
+  background-color: #e0a70e;
+}
 
 @media (max-width: 400px) {
   .loginPanel,
@@ -254,4 +254,74 @@ form.create-note button {
     width: 90%;
     margin: 20px auto;
   }
+}
+
+.edit-note-form {
+  background: #fff;
+  border-radius: 7px;
+  box-shadow: 0 2px 5px #ccc; /* Matched .note's shadow */
+  padding: 10px; /* Matched .note */
+  width: 240px; /* Matched .note */
+  margin: 16px; /* Matched .note */
+  float: left; /* Matched .note */
+  position: relative; /* Kept for the button's absolute positioning */
+  display: flex; /* Flexbox for internal layout */
+  flex-direction: column; /* Stack elements vertically */
+}
+
+.edit-note-form input,
+.edit-note-form textarea {
+  width: 100%;
+  border: none;
+  padding: 4px;
+  outline: none;
+  font-size: 1.2em;
+  font-family: inherit;
+  resize: none;
+  margin-bottom: 10px; /* Add some space below inputs */
+}
+
+.edit-note-form input{
+  font-weight: bold;
+}
+
+/* Container for the buttons */
+.edit-note-form .form-buttons {
+  display: flex;
+  justify-content: flex-end; /* Align buttons to the right */
+  gap: 8px; /* Space between buttons */
+  margin-top: 10px; /* Space above buttons */
+}
+
+/* Styles for the buttons within the form-buttons container */
+.edit-note-form .form-buttons button {
+  background: #f5ba13;
+  color: #fff;
+  border: none;
+  border-radius: 7px; /* Slightly rounded rectangular buttons */
+  padding: 8px 12px;
+  font-size: 0.9em;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Keep subtle shadow */
+  transition: background-color 0.3s ease;
+  position: static; /* Override previous absolute positioning */
+  right: auto; /* Reset right */
+  bottom: auto; /* Reset bottom */
+  width: auto; /* Reset width to auto */
+  height: auto; /* Reset height to auto */
+  display: flex; /* Enable flexbox for icon and text alignment */
+  align-items: center;
+  gap: 5px; /* Space between icon and text */
+}
+
+.edit-note-form .form-buttons button:hover {
+  background: #e0a70e;
+}
+
+.edit-note-form .form-buttons button svg {
+  fill: #fff; /* Ensure SVG icon color is white */
+  width: 18px; /* Adjust SVG size */
+  height: 18px; /* Adjust SVG size */
 }

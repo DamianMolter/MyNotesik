@@ -9,6 +9,7 @@ const port = 4000;
 const saltRounds = 8;
 let lastId = 1;
 let users = [];
+let notes = [];
 
 function loadUsers() {
   try {
@@ -32,12 +33,48 @@ function loadUsers() {
   }
 }
 
-function saveNewUser(data) {
+function loadNotes() {
+  try {
+    const rawData = fs.readFileSync("./notes.json", "utf8");
+    notes = JSON.parse(rawData);
+    console.log("Dane JSON wczytane pomyślnie.");
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      console.error(`Błąd: Plik notes nie został znaleziony.`);
+      users = [];
+    } else if (error instanceof SyntaxError) {
+      console.error(`Błąd: Nieprawidłowy format JSON w pliku notes.`);
+      users = [];
+    } else {
+      console.error(
+        "Wystąpił nieoczekiwany błąd podczas wczytywania pliku JSON:",
+        error
+      );
+      notes = [];
+    }
+  }
+}
+
+function saveUsersToFile(data) {
   try {
     const jsonData = JSON.stringify(data, null, 2); // null i 2 dla ładniejszego formatowania JSON
     fs.writeFile("./users.json", jsonData, "utf8", (err) => {
       if (err) throw err;
-      console.log("The file has been saved!");
+      console.log("Plik zapisany pomyślnie!");
+    });
+    console.log("Dane JSON zapisane pomyślnie.");
+  } catch (error) {
+    console.error("Błąd podczas zapisu pliku JSON:", error);
+    throw error;
+  }
+}
+
+function saveNotesToFile(data) {
+  try {
+    const jsonData = JSON.stringify(data, null, 2); // null i 2 dla ładniejszego formatowania JSON
+    fs.writeFile("./notes.json", jsonData, "utf8", (err) => {
+      if (err) throw err;
+      console.log("Plik zapisany pomyślnie!");
     });
     console.log("Dane JSON zapisane pomyślnie.");
   } catch (error) {
@@ -51,6 +88,7 @@ app.use(bodyParser.json());
 //app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 loadUsers();
+loadNotes();
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
@@ -112,7 +150,7 @@ app.post("/register", (req, res) => {
           password: hash,
         };
         users.push(newUserData);
-        saveNewUser(users);
+        saveUsersToFile(users);
         res.send({
           registerSuccessfull: true,
         });
@@ -121,10 +159,65 @@ app.post("/register", (req, res) => {
   }
 });
 
+app.put("/notes", (req, res) => {
+  var newId = 1;
+  if (notes.length > 0) {
+    newId = notes[notes.length - 1].id + 1;
+  }
+  const userId = req.body.userId;
+  const title = req.body.title;
+  const content = req.body.content;
+  const newNote = {
+    id: newId,
+    userId: userId,
+    title: title,
+    content: content,
+  };
+  notes.push(newNote);
+  saveNotesToFile(notes);
+  console.log(newNote);
+  res.send(newNote);
+});
+
+app.get("/notes/:userId", (req, res) => {
+  const loggedUserId = req.params.userId;
+  const result = notes.filter((note) => note.userId == loggedUserId);
+  res.send(result);
+});
+
+app.delete("/notes/:id", (req, res) => {
+  const noteId = parseInt(req.params.id);
+  console.log(noteId);
+  const searchIndex = notes.findIndex((note) => note.id === noteId);
+  if (searchIndex > -1) {
+    notes.splice(searchIndex, 1);
+    saveNotesToFile(notes);
+    res.send({ alert: "Notatka usunięta pomyślnie!" });
+  } else {
+    res
+      .status(404)
+      .json({ error: `Notatka z id równym ${noteId} nie znaleziona.` });
+  }
+});
+
+app.patch("/notes", (req, res) => {
+  const existingNote = notes.find((note) => note.id === req.body.id);
+  const newNote = {
+    id: existingNote.id,
+    userId: existingNote.userId,
+    title: req.body.title || existingNote.title,
+    content: req.body.content || existingNote.content,
+  };
+  const searchIndex = notes.findIndex((note) => note.id === req.body.id);
+  notes[searchIndex] = newNote;
+  saveNotesToFile(notes);
+  res.send({ alert: "Notatka edytowana pomyślnie!" });
+});
+
 //CHALLENGE 1: GET All posts
 
 app.get("/", (req, res) => {
-  res.json(users);
+  res.json(notes);
 });
 
 //CHALLENGE 2: GET a specific post by id

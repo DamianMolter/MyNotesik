@@ -4,13 +4,17 @@ import Footer from "./Footer";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./Dashboard";
 import AuthContainer from "./AuthContainer";
+import useToken from './useToken';
+import useLoggedUserId from "./useLoggedUserId";
+import useLoggedUserEmail from "./useLoggedUserEmail";
 
 function App() {
-  const [token, setToken] = useState("");
-  const [loggedUserId, setLoggedUserId] = useState(-1);
-  const [loggedUserEmail, setLoggedUserEmail] = useState("");
+  const {token, setToken}  = useToken();
 
-  if (!token && loggedUserId < 0) {
+  const {loggedUserId, setLoggedUserId} = useLoggedUserId();
+  const{loggedUserEmail, setLoggedUserEmail} = useLoggedUserEmail();
+
+  if (!token) {
     return (
       <div>
         <Header />

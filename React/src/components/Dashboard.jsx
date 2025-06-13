@@ -1,7 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import UserPanel from "./UserPanel";
 import CreateArea from "./CreateArea";
 import Note from "./Note";
+
+async function getNotes(loggedUserId) {
+  return fetch(`http://localhost:4000/notes/${loggedUserId}`).then((data) =>
+    data.json()
+  );
+}
+
+async function sendDeleteNoteRequest(id) {
+  return fetch(`http://localhost:4000/notes/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((data) => data.json());
+}
 
 function Dashboard({
   loggedUserId,
@@ -11,6 +26,7 @@ function Dashboard({
   setToken,
 }) {
   const [notes, setNotes] = useState([]);
+  const [editNote, setEditNote] = useState(0);
 
   function addNote(newNote) {
     setNotes((prevNotes) => {
@@ -18,13 +34,24 @@ function Dashboard({
     });
   }
 
-  function deleteNote(id) {
-    setNotes((prevNotes) => {
-      return prevNotes.filter((noteItem, index) => {
-        return index !== id;
+  const deleteNote = async (id) => {
+    const result = await sendDeleteNoteRequest(id);
+    setNotes(prevNotes => {
+      return prevNotes.filter((noteItem) => {
+        return noteItem.id !== id;
       });
     });
   }
+
+  useEffect(() => {
+    let mounted = true;
+    getNotes(loggedUserId).then((items) => {
+      if (mounted) {
+        setNotes(items);
+      }
+    });
+    return () => (mounted = false);
+  }, []);
 
   return (
     <div>
@@ -37,15 +64,17 @@ function Dashboard({
         setLoggedUserEmail={setLoggedUserEmail}
       />
 
-      <CreateArea onAdd={addNote} />
-      {notes.map((noteItem, index) => {
+      <CreateArea onAdd={addNote} loggedUserId={loggedUserId} />
+      {notes.map((noteItem) => {
         return (
           <Note
-            key={index}
-            id={index}
+            key={noteItem.id}
+            id={noteItem.id}
             title={noteItem.title}
             content={noteItem.content}
             onDelete={deleteNote}
+            editNote={editNote}
+            setEditNote={setEditNote}
           />
         );
       })}
