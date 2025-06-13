@@ -26,6 +26,7 @@ function Dashboard({
   setToken,
 }) {
   const [notes, setNotes] = useState([]);
+  const [editNote, setEditNote] = useState(0);
 
   function addNote(newNote) {
     setNotes((prevNotes) => {
@@ -72,6 +73,8 @@ function Dashboard({
             title={noteItem.title}
             content={noteItem.content}
             onDelete={deleteNote}
+            editNote={editNote}
+            setEditNote={setEditNote}
           />
         );
       })}
