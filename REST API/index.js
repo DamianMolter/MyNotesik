@@ -217,7 +217,7 @@ app.patch("/notes", (req, res) => {
 //CHALLENGE 1: GET All posts
 
 app.get("/", (req, res) => {
-  res.json(notes);
+  res.json(users);
 });
 
 //CHALLENGE 2: GET a specific post by id

@@ -55,11 +55,10 @@ function Dashboard({
 
   return (
     <div>
-      <h1>{loggedUserId}</h1>
-
       <UserPanel
         loggedUserEmail={loggedUserEmail}
         setToken={setToken}
+        loggedUserId={loggedUserId}
         setLoggedUserId={setLoggedUserId}
         setLoggedUserEmail={setLoggedUserEmail}
       />
