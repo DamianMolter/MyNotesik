@@ -159,6 +159,24 @@ app.post("/register", (req, res) => {
   }
 });
 
+app.patch("/user", (req, res) => {
+  console.log(req.body);
+  const { newPassword, loggedUserId } = req.body;
+  const searchIndex = users.findIndex((user) => user.id == loggedUserId);
+  const storedHashedPassword = users[searchIndex].password;
+  bcrypt.hash(newPassword, saltRounds, (err, hash) => {
+    if (err) {
+      console.log("Błąd hashowania hasła:", err);
+    } else {
+      users[searchIndex].password = hash;
+      saveUsersToFile(users);
+      res.send({
+        changeSuccessfull: "Hasło zmieniono pomyślnie.",
+      });
+    }
+  });
+});
+
 app.put("/notes", (req, res) => {
   var newId = 1;
   if (notes.length > 0) {

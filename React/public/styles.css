@@ -441,6 +441,14 @@ form.create-note button {
   font-weight: bold;
 }
 
+.modal-success {
+  color: green; /* Czerwony kolor dla komunikatów błędów */
+  text-align: center;
+  margin-top: 15px;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
 /* Kontener na przyciski w modalu */
 .modal-actions {
   display: flex;

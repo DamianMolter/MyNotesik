@@ -1,39 +1,40 @@
 import React, { useState } from "react";
 
-function ChangePasswordModal({ onClose }) {
-  const [currentPassword, setCurrentPassword] = useState("");
+async function changePassword(newPassword, loggedUserId) {
+ return fetch(`http://localhost:4000/user`, {
+   method: 'PATCH',
+   headers: {
+     'Content-Type': 'application/json'
+   },
+   body: JSON.stringify({
+      newPassword: newPassword,
+      loggedUserId: loggedUserId
+   })
+ })
+   .then((data) => data.json())
+}
+
+function ChangePasswordModal({ onClose, loggedUserId }) {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [changeSuccessfull, setChangeSuccessfull] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
-
     if (newPassword !== confirmNewPassword) {
       setMessage("Nowe hasła nie są identyczne!");
       return;
     }
-
     if (newPassword.length < 6) {
       setMessage("Nowe hasło musi mieć co najmniej 6 znaków.");
       return;
     }
-
-    // Tutaj logika do wysłania danych na serwer (np. za pomocą fetch lub axios)
-    console.log("Zmieniam hasło:", { currentPassword, newPassword });
-    // Po udanej zmianie:
-    // onClose(); // Zamknij modal
-    // alert('Hasło zostało zmienione pomyślnie!');
-
-    // Symulacja API call
+    const response = await changePassword(newPassword, loggedUserId);
+    setChangeSuccessfull(response.changeSuccessfull);
     setTimeout(() => {
-      setMessage("Hasło zostało zmienione pomyślnie!");
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmNewPassword("");
-      // Możesz zamknąć modal po krótkim czasie, lub wymagać kliknięcia "OK"
-      // onClose();
+      onClose();
     }, 1500);
   };
 
@@ -43,20 +44,10 @@ function ChangePasswordModal({ onClose }) {
         <h2>Zmień hasło</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="currentPassword">Aktualne hasło:</label>
-            <input
-              type="password"
-              id="currentPassword"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              required
-            />
-          </div>
-          <div className="form-group">
             <label htmlFor="newPassword">Nowe hasło:</label>
             <input
               type="password"
-              id="newPassword"
+              name="newPassword"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               required
@@ -66,13 +57,14 @@ function ChangePasswordModal({ onClose }) {
             <label htmlFor="confirmNewPassword">Potwierdź nowe hasło:</label>
             <input
               type="password"
-              id="confirmNewPassword"
+              name="confirmNewPassword"
               value={confirmNewPassword}
               onChange={(e) => setConfirmNewPassword(e.target.value)}
               required
             />
           </div>
           {message && <p className="modal-message">{message}</p>}
+          {changeSuccessfull && <p className="modal-success">{changeSuccessfull}</p>}
           <div className="modal-actions">
             <button type="submit" className="button primary">
               Zmień hasło
