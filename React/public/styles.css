@@ -98,6 +98,7 @@ form.create-note button {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   cursor: pointer;
   outline: none;
+  z-index: 0;
 }
 
 .loginContainer {
@@ -223,12 +224,37 @@ form.create-note button {
 .user-info {
   flex-grow: 1;
   text-align: center;
+  margin-bottom: 10px;
 }
 
 .user-info p {
   font-size: 1em;
   margin-bottom: 5px;
   color: #333;
+}
+
+.user-info b {
+  font-size: 1.1em;
+}
+
+.account-options {
+  margin-top: 5px;
+  margin-left: 15px;
+}
+
+.account-options p {
+  margin: 5px 0;
+  font-size: 0.95em;
+  color: #555;
+}
+
+.account-options p:hover {
+  text-decoration: underline;
+  color: #007bff;
+}
+
+.account-options p[style*="red"]:hover {
+    color: #dc3545;
 }
 
 .logout-button {
@@ -324,4 +350,161 @@ form.create-note button {
   fill: #fff; /* Ensure SVG icon color is white */
   width: 18px; /* Adjust SVG size */
   height: 18px; /* Adjust SVG size */
+}
+
+/* Modal Overlay - Półprzezroczyste tło, które zakrywa całą stronę */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7); /* Ciemne, półprzezroczyste tło */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Upewnia się, że modal jest na wierzchu innych elementów */
+  animation: fadeInOverlay 0.3s ease-out; /* Animacja pojawiania się tła */
+}
+
+/* Animacja pojawiania się tła */
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Modal Content - Główne pudełko modala */
+.modal-content {
+  background-color: #fff; /* Białe tło, jak w innych panelach */
+  padding: 30px;
+  border-radius: 7px; /* Zaokrąglenia pasujące do projektu */
+  box-shadow: 0 2px 5px #ccc; /* Cień pasujący do .loginPanel, .note itp. */
+  width: 90%; /* Responsywna szerokość */
+  max-width: 450px; /* Maksymalna szerokość na większych ekranach */
+  position: relative;
+  font-family: "Montserrat", sans-serif; /* Dziedziczenie czcionki projektu */
+  animation: fadeInModal 0.3s ease-out; /* Animacja pojawiania się modala */
+}
+
+/* Animacja pojawiania się modala */
+@keyframes fadeInModal {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Nagłówek w modalu */
+.modal-content h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333; /* Ciemny kolor tekstu */
+  font-size: 1.5em; /* Podobny rozmiar do nagłówków w panelach logowania */
+}
+
+/* Grupa formularza (label + input) */
+.form-group {
+  margin-bottom: 15px;
+}
+
+/* Etykiety pól formularza */
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #555; /* Średnio szary kolor tekstu */
+}
+
+/* Pola tekstowe i hasła w formularzach modali */
+.form-group input[type="password"],
+.form-group input[type="text"] {
+  width: 100%; /* Pełna szerokość */
+  padding: 10px;
+  margin-bottom: 0; /* Usunięcie dolnego marginesu, bo jest już w .form-group */
+  border: 1px solid #ddd; /* Jasna ramka, jak w formularzach logowania */
+  border-radius: 4px; /* Delikatne zaokrąglenia inputów */
+  font-size: 1em;
+  font-family: inherit; /* Dziedziczenie czcionki */
+  outline: none;
+}
+
+/* Styl dla pola input po najechaniu lub kliknięciu (focus) */
+.form-group input[type="password"]:focus,
+.form-group input[type="text"]:focus {
+  border-color: #f5ba13; /* Kolor ramki akcentu */
+  box-shadow: 0 0 5px rgba(245, 186, 19, 0.5); /* Delikatny cień na focus */
+}
+
+/* Komunikaty w modalu (np. błędy, sukces) */
+.modal-message {
+  color: #dc3545; /* Czerwony kolor dla komunikatów błędów */
+  text-align: center;
+  margin-top: 15px;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+.modal-success {
+  color: green; /* Czerwony kolor dla komunikatów błędów */
+  text-align: center;
+  margin-top: 15px;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+/* Kontener na przyciski w modalu */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end; /* Przyciski wyrównane do prawej */
+  gap: 10px; /* Odstęp między przyciskami */
+  margin-top: 25px;
+}
+
+/* Ogólny styl przycisków w modalu */
+.button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 7px; /* Zaokrąglenia pasujące do innych przycisków projektu */
+  cursor: pointer;
+  font-size: 1em;
+  font-family: inherit; /* Dziedziczenie czcionki */
+  outline: none;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Płynne przejścia */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Subtelny cień na przyciskach */
+}
+
+/* Przycisk główny (np. "Zmień hasło") */
+.button.primary {
+  background-color: #f5ba13; /* Kolor akcentu */
+  color: white;
+}
+
+.button.primary:hover {
+  background-color: #e0a70e; /* Ciemniejszy odcień przy najechaniu */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Zwiększony cień przy najechaniu */
+}
+
+/* Przycisk drugorzędny (np. "Anuluj") */
+.button.secondary {
+  background-color: #6c757d; /* Neutralny szary */
+  color: white;
+}
+
+.button.secondary:hover {
+  background-color: #5a6268; /* Ciemniejszy szary przy najechaniu */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Przycisk niebezpieczny (np. "Usuń konto") */
+.button.danger {
+  background-color: #dc3545; /* Czerwony kolor dla akcji destrukcyjnych */
+  color: white;
+}
+
+.button.danger:hover {
+  background-color: #bd2130; /* Ciemniejszy czerwony przy najechaniu */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Styl dla tekstu potwierdzającego usunięcie konta */
+.modal-content p b {
+  color: #f5ba13; /* Kolor akcentu dla wyróżnienia tekstu do potwierdzenia */
 }

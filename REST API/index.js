@@ -159,6 +159,37 @@ app.post("/register", (req, res) => {
   }
 });
 
+app.patch("/user", (req, res) => {
+  const { newPassword, loggedUserId } = req.body;
+  const searchIndex = users.findIndex((user) => user.id == loggedUserId);
+  const storedHashedPassword = users[searchIndex].password;
+  bcrypt.hash(newPassword, saltRounds, (err, hash) => {
+    if (err) {
+      console.log("Błąd hashowania hasła:", err);
+    } else {
+      users[searchIndex].password = hash;
+      saveUsersToFile(users);
+      res.send({
+        changeSuccessfull: "Hasło zmieniono pomyślnie.",
+      });
+    }
+  });
+});
+
+app.delete("/user", (req, res) => {
+  const loggedUserId = req.body.loggedUserId;
+  console.log(loggedUserId);
+  const searchIndex = users.findIndex((user) => user.id == loggedUserId);
+  users = users.filter((user) => user.id != loggedUserId);
+  notes = notes.filter((note) => note.userId != loggedUserId);
+  saveUsersToFile(users);
+  saveNotesToFile(notes);
+  res.send({
+    deleteSuccessfull:
+      "Konto usunięte pomyślnie. Za 3 sekundy nastąpi automatyczne wylogowanie.",
+  });
+});
+
 app.put("/notes", (req, res) => {
   var newId = 1;
   if (notes.length > 0) {
@@ -217,7 +248,7 @@ app.patch("/notes", (req, res) => {
 //CHALLENGE 1: GET All posts
 
 app.get("/", (req, res) => {
-  res.json(notes);
+  res.json(users);
 });
 
 //CHALLENGE 2: GET a specific post by id
