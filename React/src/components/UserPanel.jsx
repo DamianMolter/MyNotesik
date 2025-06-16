@@ -80,7 +80,7 @@ function UserPanel({
         <ChangePasswordModal onClose={closeChangePasswordModal} loggedUserId={loggedUserId}/>
       )}
       {showDeleteAccountModal && (
-        <DeleteAccountModal onClose={closeDeleteAccountModal} loggedUserId={loggedUserId}/>
+        <DeleteAccountModal onClose={closeDeleteAccountModal} loggedUserId={loggedUserId} setToken={setToken}/>
       )}
     </div>
   );

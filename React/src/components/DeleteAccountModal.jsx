@@ -1,11 +1,25 @@
 import React, { useState } from 'react';
 
-function DeleteAccountModal({ onClose }) {
+async function deleteAllUserData(loggedUserId) {
+ return fetch(`http://localhost:4000/user`, {
+   method: 'DELETE',
+   headers: {
+     'Content-Type': 'application/json'
+   },
+   body: JSON.stringify({
+      loggedUserId: loggedUserId
+   })
+ })
+   .then((data) => data.json())
+}
+
+function DeleteAccountModal({ onClose, loggedUserId, setToken }) {
   const [confirmText, setConfirmText] = useState('');
   const [message, setMessage] = useState('');
-  const expectedConfirmText = 'USUŃ KONTO'; // Wymagany tekst do potwierdzenia
+  const [deleteSuccessfull, setDeleteSuccessfull] = useState("");
+  const expectedConfirmText = 'usuń konto'; // Wymagany tekst do potwierdzenia
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
 
@@ -14,20 +28,14 @@ function DeleteAccountModal({ onClose }) {
       return;
     }
 
-    // Tutaj logika do wysłania żądania usunięcia konta na serwer
-    console.log('Usuwam konto...');
-    // Po udanym usunięciu:
-    // onClose(); // Zamknij modal
-    // alert('Konto zostało usunięte pomyślnie!');
-    // Przekieruj użytkownika lub wyloguj go
+    const result = await deleteAllUserData(loggedUserId);
+    setDeleteSuccessfull(result.deleteSuccessfull);
 
-    // Symulacja API call
     setTimeout(() => {
-      setMessage('Konto zostało usunięte pomyślnie. Zostaniesz wylogowany.');
       setConfirmText('');
-      // W idealnym scenariuszu tutaj nastąpiłoby wylogowanie/przekierowanie
-      // onClose(); // Możesz zamknąć modal i wywołać funkcję wylogowania z komponentu nadrzędnego
-    }, 1500);
+      onClose();
+      setToken("");
+    }, 3000);
   };
 
   return (
@@ -37,10 +45,12 @@ function DeleteAccountModal({ onClose }) {
         <p>
           Potwierdź usunięcie konta, wpisując poniżej: <b>{expectedConfirmText}</b>
         </p>
+        <p>Usunięciu ulegnie Twoje konto oraz wszystkie Twoje notatki.</p>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <input
               type="text"
+              name="confirmText"
               value={confirmText}
               onChange={(e) => setConfirmText(e.target.value)}
               placeholder={`Wpisz "${expectedConfirmText}"`}
@@ -48,6 +58,7 @@ function DeleteAccountModal({ onClose }) {
             />
           </div>
           {message && <p className="modal-message">{message}</p>}
+          {deleteSuccessfull && <p className="modal-success">{deleteSuccessfull}</p>}
           <div className="modal-actions">
             <button type="submit" className="button danger">Usuń konto</button>
             <button type="button" onClick={onClose} className="button secondary">Anuluj</button>

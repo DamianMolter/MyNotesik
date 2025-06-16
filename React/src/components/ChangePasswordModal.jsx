@@ -27,8 +27,8 @@ function ChangePasswordModal({ onClose, loggedUserId }) {
       setMessage("Nowe hasła nie są identyczne!");
       return;
     }
-    if (newPassword.length < 6) {
-      setMessage("Nowe hasło musi mieć co najmniej 6 znaków.");
+    if (newPassword.length < 3) {
+      setMessage("Nowe hasło musi mieć co najmniej 3 znaki.");
       return;
     }
     const response = await changePassword(newPassword, loggedUserId);

@@ -160,7 +160,6 @@ app.post("/register", (req, res) => {
 });
 
 app.patch("/user", (req, res) => {
-  console.log(req.body);
   const { newPassword, loggedUserId } = req.body;
   const searchIndex = users.findIndex((user) => user.id == loggedUserId);
   const storedHashedPassword = users[searchIndex].password;
@@ -174,6 +173,20 @@ app.patch("/user", (req, res) => {
         changeSuccessfull: "Hasło zmieniono pomyślnie.",
       });
     }
+  });
+});
+
+app.delete("/user", (req, res) => {
+  const loggedUserId = req.body.loggedUserId;
+  console.log(loggedUserId);
+  const searchIndex = users.findIndex((user) => user.id == loggedUserId);
+  users = users.filter((user) => user.id != loggedUserId);
+  notes = notes.filter((note) => note.userId != loggedUserId);
+  saveUsersToFile(users);
+  saveNotesToFile(notes);
+  res.send({
+    deleteSuccessfull:
+      "Konto usunięte pomyślnie. Za 3 sekundy nastąpi automatyczne wylogowanie.",
   });
 });
 
