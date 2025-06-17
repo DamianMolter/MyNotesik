@@ -29,7 +29,6 @@ function Register({openLoginPage}) {
       password,
       confirmPassword
     });
-    console.log(response);
     const {emailOccupied, passwordConfirmFailed, registerSuccessfull} = response;
     setEmailOccupied(emailOccupied);    
     setPasswordConfirmFailed(passwordConfirmFailed);

@@ -24,7 +24,6 @@ function EditNote(props) {
   const handleSubmit = async e => {
     e.preventDefault();
     const result = await saveEditedNote(newNote);
-    console.log(result);
     props.setEditNote(0);
     props.setNote(newNote);
   }
