@@ -34,6 +34,9 @@ function Register({openLoginPage}) {
     setEmailOccupied(emailOccupied);    
     setPasswordConfirmFailed(passwordConfirmFailed);
     setRegisterSuccessfull(registerSuccessfull);
+     setTimeout(() => {
+      openLoginPage(true);
+    }, 1500);
   }
 
   return (
@@ -45,7 +48,7 @@ function Register({openLoginPage}) {
           <input type="password" placeholder="Hasło" onChange={event => {setPassword(event.target.value)}}/>
           <input type="password" placeholder="Potwierdź hasło" onChange={event => {setConfirmPassword(event.target.value)}}/>
           <button type="submit">Zarejestruj się</button>
-          {registerSuccessfull && <p style={{color: "green", fontWeight: "bold"}}>Twoje konto zostało założone pomyślnie</p>}
+          {registerSuccessfull && <p style={{color: "green", fontWeight: "bold"}}>Twoje konto zostało założone pomyślnie! Zaloguj się!</p>}
           {passwordConfirmFailed && <p style={{color: "red", fontWeight: "bold"}}>Podane hasla nie są identyczne!</p>}
           {emailOccupied && <p style={{color: "red", fontWeight: "bold"}}>Na podany adres email zostało już założone konto!</p>}
           <p className="login-register-text">
