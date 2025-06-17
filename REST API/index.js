@@ -7,7 +7,6 @@ import bcrypt from "bcrypt";
 const app = express();
 const port = 4000;
 const saltRounds = 8;
-let lastId = 1;
 let users = [];
 let notes = [];
 
@@ -57,7 +56,7 @@ function loadNotes() {
 
 function saveUsersToFile(data) {
   try {
-    const jsonData = JSON.stringify(data, null, 2); // null i 2 dla ładniejszego formatowania JSON
+    const jsonData = JSON.stringify(data, null, 2);
     fs.writeFile("./users.json", jsonData, "utf8", (err) => {
       if (err) throw err;
       console.log("Plik zapisany pomyślnie!");
@@ -71,7 +70,7 @@ function saveUsersToFile(data) {
 
 function saveNotesToFile(data) {
   try {
-    const jsonData = JSON.stringify(data, null, 2); // null i 2 dla ładniejszego formatowania JSON
+    const jsonData = JSON.stringify(data, null, 2);
     fs.writeFile("./notes.json", jsonData, "utf8", (err) => {
       if (err) throw err;
       console.log("Plik zapisany pomyślnie!");
@@ -85,7 +84,6 @@ function saveNotesToFile(data) {
 
 // Middleware
 app.use(bodyParser.json());
-//app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 loadUsers();
 loadNotes();
@@ -178,7 +176,6 @@ app.patch("/user", (req, res) => {
 
 app.delete("/user", (req, res) => {
   const loggedUserId = req.body.loggedUserId;
-  console.log(loggedUserId);
   const searchIndex = users.findIndex((user) => user.id == loggedUserId);
   users = users.filter((user) => user.id != loggedUserId);
   notes = notes.filter((note) => note.userId != loggedUserId);
@@ -206,7 +203,6 @@ app.put("/notes", (req, res) => {
   };
   notes.push(newNote);
   saveNotesToFile(notes);
-  console.log(newNote);
   res.send(newNote);
 });
 
@@ -218,7 +214,6 @@ app.get("/notes/:userId", (req, res) => {
 
 app.delete("/notes/:id", (req, res) => {
   const noteId = parseInt(req.params.id);
-  console.log(noteId);
   const searchIndex = notes.findIndex((note) => note.id === noteId);
   if (searchIndex > -1) {
     notes.splice(searchIndex, 1);
@@ -243,70 +238,6 @@ app.patch("/notes", (req, res) => {
   notes[searchIndex] = newNote;
   saveNotesToFile(notes);
   res.send({ alert: "Notatka edytowana pomyślnie!" });
-});
-
-//CHALLENGE 1: GET All posts
-
-app.get("/", (req, res) => {
-  res.json(users);
-});
-
-//CHALLENGE 2: GET a specific post by id
-
-app.get("/posts/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  const searchIndex = posts.findIndex((post) => post.id === id);
-  res.json(posts[searchIndex]);
-});
-
-//CHALLENGE 3: POST a new post
-
-app.post("/posts", (req, res) => {
-  const newId = posts[posts.length - 1].id + 1;
-  const title = req.body.title;
-  const content = req.body.content;
-  const author = req.body.author;
-  const newPost = {
-    id: newId,
-    title: title,
-    content: content,
-    author: author,
-    date: new Date(),
-  };
-  posts.push(newPost);
-  res.status(201).json(newPost);
-});
-
-//CHALLENGE 4: PATCH a post when you just want to update one parameter
-
-app.patch("/posts/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  const existingPost = posts.find((post) => post.id === id);
-
-  const replacementPost = {
-    id: id,
-    title: req.body.title || existingPost.title,
-    content: req.body.content || existingPost.content,
-    author: req.body.author || existingPost.author,
-    date: new Date(),
-  };
-  const searchIndex = posts.findIndex((post) => post.id === id);
-  posts[searchIndex] = replacementPost;
-  res.json(replacementPost);
-});
-
-//CHALLENGE 5: DELETE a specific post by providing the post id.
-
-app.delete("/posts/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  const searchIndex = posts.findIndex((post) => post.id === id);
-  console.log(searchIndex);
-  if (searchIndex > -1) {
-    posts.splice(searchIndex, 1);
-    res.sendStatus(200);
-  } else {
-    res.status(404).json({ error: `Post with id ${id} not found.` });
-  }
 });
 
 app.listen(port, () => {
