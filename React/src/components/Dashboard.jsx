@@ -4,16 +4,22 @@ import CreateArea from "./CreateArea";
 import Note from "./Note";
 
 async function getNotes(loggedUserId) {
-  return fetch(`http://localhost:4000/notes/${loggedUserId}`).then((data) =>
-    data.json()
-  );
+  const token = JSON.parse(localStorage.getItem("token"));
+  return fetch(`http://localhost:4000/notes/${loggedUserId}`, {
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
+    },
+  }).then((data) => data.json());
 }
 
 async function sendDeleteNoteRequest(id) {
+  const token = JSON.parse(localStorage.getItem("token"));
   return fetch(`http://localhost:4000/notes/${id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
     },
   }).then((data) => data.json());
 }
@@ -36,12 +42,12 @@ function Dashboard({
 
   const deleteNote = async (id) => {
     const result = await sendDeleteNoteRequest(id);
-    setNotes(prevNotes => {
+    setNotes((prevNotes) => {
       return prevNotes.filter((noteItem) => {
         return noteItem.id !== id;
       });
     });
-  }
+  };
 
   useEffect(() => {
     let mounted = true;

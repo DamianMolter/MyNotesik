@@ -10,7 +10,6 @@ import useLoggedUserEmail from "./useLoggedUserEmail";
 
 function App() {
   const {token, setToken}  = useToken();
-
   const {loggedUserId, setLoggedUserId} = useLoggedUserId();
   const{loggedUserEmail, setLoggedUserEmail} = useLoggedUserEmail();
 

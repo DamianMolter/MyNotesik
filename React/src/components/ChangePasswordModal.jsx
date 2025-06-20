@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 
 async function changePassword(newPassword, loggedUserId) {
- return fetch(`http://localhost:4000/user`, {
-   method: 'PATCH',
-   headers: {
-     'Content-Type': 'application/json'
-   },
-   body: JSON.stringify({
+  const token = JSON.parse(localStorage.getItem("token"));
+  return fetch(`http://localhost:4000/user`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
+    },
+    body: JSON.stringify({
       newPassword: newPassword,
-      loggedUserId: loggedUserId
-   })
- })
-   .then((data) => data.json())
+      loggedUserId: loggedUserId,
+    }),
+  }).then((data) => data.json());
 }
 
 function ChangePasswordModal({ onClose, loggedUserId }) {
@@ -64,7 +65,9 @@ function ChangePasswordModal({ onClose, loggedUserId }) {
             />
           </div>
           {message && <p className="modal-message">{message}</p>}
-          {changeSuccessfull && <p className="modal-success">{changeSuccessfull}</p>}
+          {changeSuccessfull && (
+            <p className="modal-success">{changeSuccessfull}</p>
+          )}
           <div className="modal-actions">
             <button type="submit" className="button primary">
               Zmień hasło

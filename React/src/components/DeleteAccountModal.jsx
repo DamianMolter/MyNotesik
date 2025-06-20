@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 
 async function deleteAllUserData(loggedUserId) {
+  const token = JSON.parse(localStorage.getItem("token"));
  return fetch(`http://localhost:4000/user`, {
    method: 'DELETE',
    headers: {
-     'Content-Type': 'application/json'
+     'Content-Type': 'application/json',
+     "Authorization": `Bearer ${token}`,
    },
    body: JSON.stringify({
       loggedUserId: loggedUserId
@@ -17,7 +19,7 @@ function DeleteAccountModal({ onClose, loggedUserId, setToken }) {
   const [confirmText, setConfirmText] = useState('');
   const [message, setMessage] = useState('');
   const [deleteSuccessfull, setDeleteSuccessfull] = useState("");
-  const expectedConfirmText = 'usuń konto'; // Wymagany tekst do potwierdzenia
+  const expectedConfirmText = 'usuń konto';
 
   const handleSubmit = async (e) => {
     e.preventDefault();

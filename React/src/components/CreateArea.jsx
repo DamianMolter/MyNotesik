@@ -4,10 +4,12 @@ import { Fab } from "@mui/material";
 import { Zoom } from "@mui/material";
 
 async function saveNote(note) {
+  const token = JSON.parse(localStorage.getItem("token"));
   return fetch("http://localhost:4000/notes", {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
     },
     body: JSON.stringify(note),
   }).then((data) => data.json());
