@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Login from "./Login";
 import Register from "./Register";
 
-function AuthContainer({ setToken, setLoggedUserId, setLoggedUserEmail }) {
+function AuthContainer() {
   const [showLogin, setShowLogin] = useState(true);
 
   return (

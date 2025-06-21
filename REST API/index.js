@@ -204,7 +204,7 @@ app.delete("/user", authenticateToken, (req, res) => {
   });
 });
 
-app.put("/notes", authenticateToken, (req, res) => {
+app.post("/notes", authenticateToken, (req, res) => {
   var newId = 1;
   if (notes.length > 0) {
     newId = notes[notes.length - 1].id + 1;
