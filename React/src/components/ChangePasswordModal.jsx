@@ -35,7 +35,8 @@ function ChangePasswordModal({ onClose, loggedUserId }) {
       return;
     }
     const response = await changePassword(newPassword, user.id);
-    setChangeSuccessfull(response.changeSuccessfull);
+    console.log(response);
+    setChangeSuccessfull(response.message);
     setTimeout(() => {
       onClose();
     }, 1500);

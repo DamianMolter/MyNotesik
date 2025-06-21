@@ -33,13 +33,13 @@ function DeleteAccountModal({ onClose}) {
     }
 
     const result = await deleteAllUserData(user.id);
-    setDeleteSuccessfull(result.deleteSuccessfull);
+    setDeleteSuccessfull(result.message);
 
     setTimeout(() => {
       setConfirmText('');
       onClose();
       logout();
-    }, 3000);
+    }, 2000);
   };
 
   return (
