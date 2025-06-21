@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
 import UserPanel from "./UserPanel";
 import CreateArea from "./CreateArea";
 import Note from "./Note";
@@ -24,15 +25,10 @@ async function sendDeleteNoteRequest(id) {
   }).then((data) => data.json());
 }
 
-function Dashboard({
-  loggedUserId,
-  loggedUserEmail,
-  setLoggedUserId,
-  setLoggedUserEmail,
-  setToken,
-}) {
+function Dashboard() {
   const [notes, setNotes] = useState([]);
   const [editNote, setEditNote] = useState(0);
+  const {user} = useAuth();
 
   function addNote(newNote) {
     setNotes((prevNotes) => {
@@ -51,7 +47,7 @@ function Dashboard({
 
   useEffect(() => {
     let mounted = true;
-    getNotes(loggedUserId).then((items) => {
+    getNotes(user.id).then((items) => {
       if (mounted) {
         setNotes(items);
       }
@@ -61,15 +57,9 @@ function Dashboard({
 
   return (
     <div>
-      <UserPanel
-        loggedUserEmail={loggedUserEmail}
-        setToken={setToken}
-        loggedUserId={loggedUserId}
-        setLoggedUserId={setLoggedUserId}
-        setLoggedUserEmail={setLoggedUserEmail}
-      />
+      <UserPanel/>
 
-      <CreateArea onAdd={addNote} loggedUserId={loggedUserId} />
+      <CreateArea onAdd={addNote}/>
       {notes.map((noteItem) => {
         return (
           <Note

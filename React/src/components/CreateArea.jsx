@@ -6,7 +6,7 @@ import { Zoom } from "@mui/material";
 async function saveNote(note) {
   const token = JSON.parse(localStorage.getItem("token"));
   return fetch("http://localhost:4000/notes", {
-    method: "PUT",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${token}`,
