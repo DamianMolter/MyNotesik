@@ -2,20 +2,11 @@ import React, { useState } from "react";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ChangePasswordModal from "./ChangePasswordModal";
 import DeleteAccountModal from "./DeleteAccountModal";
+import { useAuth } from "../contexts/AuthContext";
 
-function UserPanel({
-  loggedUserEmail,
-  loggedUserId,
-  setLoggedUserId,
-  setLoggedUserEmail,
-  setToken,
-}) {
-  function handleLogout() {
-    setToken("");
-    setLoggedUserId(-1);
-    setLoggedUserEmail("");
-  }
+function UserPanel() {
 
+  const {user, logout} = useAuth();
   const [showAccountOptions, setShowAccountOptions] = useState(false);
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false);
@@ -51,7 +42,7 @@ function UserPanel({
           <p>Zalogowano jako:</p>
           <p>
             <b onClick={toggleAccountOptions} style={{ cursor: "pointer" }}>
-              {loggedUserEmail}
+              {user.email}
             </b>
             <ArrowDropDownIcon fontSize="small" />
           </p>
@@ -72,15 +63,15 @@ function UserPanel({
             </div>
           )}
         </div>
-        <button className="logout-button" onClick={handleLogout}>
+        <button className="logout-button" onClick={logout}>
           Wyloguj
         </button>
       </div>
       {showChangePasswordModal && (
-        <ChangePasswordModal onClose={closeChangePasswordModal} loggedUserId={loggedUserId}/>
+        <ChangePasswordModal onClose={closeChangePasswordModal}/>
       )}
       {showDeleteAccountModal && (
-        <DeleteAccountModal onClose={closeDeleteAccountModal} loggedUserId={loggedUserId} setToken={setToken}/>
+        <DeleteAccountModal onClose={closeDeleteAccountModal}/>
       )}
     </div>
   );

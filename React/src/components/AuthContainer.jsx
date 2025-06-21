@@ -10,9 +10,6 @@ function AuthContainer({ setToken, setLoggedUserId, setLoggedUserEmail }) {
       {showLogin ? (
         <Login
           openRegisterPage={setShowLogin}
-          setToken={setToken}
-          setLoggedUserId={setLoggedUserId}
-          setLoggedUserEmail={setLoggedUserEmail}
         />
       ) : (
         <Register openLoginPage={setShowLogin} />

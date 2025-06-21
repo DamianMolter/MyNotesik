@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 async function deleteAllUserData(loggedUserId) {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -15,11 +16,12 @@ async function deleteAllUserData(loggedUserId) {
    .then((data) => data.json())
 }
 
-function DeleteAccountModal({ onClose, loggedUserId, setToken }) {
+function DeleteAccountModal({ onClose}) {
   const [confirmText, setConfirmText] = useState('');
   const [message, setMessage] = useState('');
   const [deleteSuccessfull, setDeleteSuccessfull] = useState("");
   const expectedConfirmText = 'usuń konto';
+  const {user, logout} = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,13 +32,13 @@ function DeleteAccountModal({ onClose, loggedUserId, setToken }) {
       return;
     }
 
-    const result = await deleteAllUserData(loggedUserId);
+    const result = await deleteAllUserData(user.id);
     setDeleteSuccessfull(result.deleteSuccessfull);
 
     setTimeout(() => {
       setConfirmText('');
       onClose();
-      setToken("");
+      logout();
     }, 3000);
   };
 

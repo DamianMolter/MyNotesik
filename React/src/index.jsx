@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./components/App";
+import MainApp from "./components/MainApp";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<App />);
+root.render(<MainApp />);
 
 // If you're running this locally in VS Code use the commands:
 // npm install

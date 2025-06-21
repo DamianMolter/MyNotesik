@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = async (credentials) => {
+  async function login(credentials) {
     try {
       const response = await fetch('http://localhost:4000/login', {
         method: 'POST',
