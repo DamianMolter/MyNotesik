@@ -1,17 +1,19 @@
 import React, { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
 
 async function changePassword(newPassword, loggedUserId) {
- return fetch(`http://localhost:4000/user`, {
-   method: 'PATCH',
-   headers: {
-     'Content-Type': 'application/json'
-   },
-   body: JSON.stringify({
+  const token = JSON.parse(localStorage.getItem("token"));
+  return fetch(`http://localhost:4000/user`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
+    },
+    body: JSON.stringify({
       newPassword: newPassword,
-      loggedUserId: loggedUserId
-   })
- })
-   .then((data) => data.json())
+      loggedUserId: loggedUserId,
+    }),
+  }).then((data) => data.json());
 }
 
 function ChangePasswordModal({ onClose, loggedUserId }) {
@@ -19,6 +21,7 @@ function ChangePasswordModal({ onClose, loggedUserId }) {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [message, setMessage] = useState("");
   const [changeSuccessfull, setChangeSuccessfull] = useState("");
+  const {user} = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,7 +34,7 @@ function ChangePasswordModal({ onClose, loggedUserId }) {
       setMessage("Nowe hasło musi mieć co najmniej 3 znaki.");
       return;
     }
-    const response = await changePassword(newPassword, loggedUserId);
+    const response = await changePassword(newPassword, user.id);
     setChangeSuccessfull(response.changeSuccessfull);
     setTimeout(() => {
       onClose();
@@ -64,7 +67,9 @@ function ChangePasswordModal({ onClose, loggedUserId }) {
             />
           </div>
           {message && <p className="modal-message">{message}</p>}
-          {changeSuccessfull && <p className="modal-success">{changeSuccessfull}</p>}
+          {changeSuccessfull && (
+            <p className="modal-success">{changeSuccessfull}</p>
+          )}
           <div className="modal-actions">
             <button type="submit" className="button primary">
               Zmień hasło

@@ -4,25 +4,16 @@ import Footer from "./Footer";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./Dashboard";
 import AuthContainer from "./AuthContainer";
-import useToken from './useToken';
-import useLoggedUserId from "./useLoggedUserId";
-import useLoggedUserEmail from "./useLoggedUserEmail";
+import { useAuth } from "../contexts/AuthContext";
 
 function App() {
-  const {token, setToken}  = useToken();
-
-  const {loggedUserId, setLoggedUserId} = useLoggedUserId();
-  const{loggedUserEmail, setLoggedUserEmail} = useLoggedUserEmail();
+  const {token, user}  = useAuth();
 
   if (!token) {
     return (
       <div>
         <Header />
-        <AuthContainer
-          setToken={setToken}
-          setLoggedUserId={setLoggedUserId}
-          setLoggedUserEmail={setLoggedUserEmail}
-        />
+        <AuthContainer/>
         <Footer />
       </div>
     );
@@ -36,13 +27,7 @@ function App() {
           <Route
             path="/"
             element={
-              <Dashboard
-                loggedUserId={loggedUserId}
-                loggedUserEmail={loggedUserEmail}
-                setLoggedUserId={setLoggedUserId}
-                setLoggedUserEmail={setLoggedUserEmail}
-                setToken={setToken}
-              />
+              <Dashboard />
             }
           />
         </Routes>

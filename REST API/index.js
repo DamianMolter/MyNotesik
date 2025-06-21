@@ -82,6 +82,23 @@ function saveNotesToFile(data) {
   }
 }
 
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (!token) {
+    return res.sendStatus(401);
+  }
+
+  // Tutaj zweryfikuj prawdziwy JWT token
+  if (token === "test123") {
+    // Tymczasowe rozwiązanie
+    next();
+  } else {
+    res.sendStatus(403);
+  }
+}
+
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
@@ -157,7 +174,7 @@ app.post("/register", (req, res) => {
   }
 });
 
-app.patch("/user", (req, res) => {
+app.patch("/user", authenticateToken, (req, res) => {
   const { newPassword, loggedUserId } = req.body;
   const searchIndex = users.findIndex((user) => user.id == loggedUserId);
   const storedHashedPassword = users[searchIndex].password;
@@ -174,7 +191,7 @@ app.patch("/user", (req, res) => {
   });
 });
 
-app.delete("/user", (req, res) => {
+app.delete("/user", authenticateToken, (req, res) => {
   const loggedUserId = req.body.loggedUserId;
   const searchIndex = users.findIndex((user) => user.id == loggedUserId);
   users = users.filter((user) => user.id != loggedUserId);
@@ -187,7 +204,7 @@ app.delete("/user", (req, res) => {
   });
 });
 
-app.put("/notes", (req, res) => {
+app.put("/notes", authenticateToken, (req, res) => {
   var newId = 1;
   if (notes.length > 0) {
     newId = notes[notes.length - 1].id + 1;
@@ -206,13 +223,13 @@ app.put("/notes", (req, res) => {
   res.send(newNote);
 });
 
-app.get("/notes/:userId", (req, res) => {
+app.get("/notes/:userId", authenticateToken, (req, res) => {
   const loggedUserId = req.params.userId;
   const result = notes.filter((note) => note.userId == loggedUserId);
   res.send(result);
 });
 
-app.delete("/notes/:id", (req, res) => {
+app.delete("/notes/:id", authenticateToken, (req, res) => {
   const noteId = parseInt(req.params.id);
   const searchIndex = notes.findIndex((note) => note.id === noteId);
   if (searchIndex > -1) {
@@ -226,7 +243,7 @@ app.delete("/notes/:id", (req, res) => {
   }
 });
 
-app.patch("/notes", (req, res) => {
+app.patch("/notes", authenticateToken, (req, res) => {
   const existingNote = notes.find((note) => note.id === req.body.id);
   const newNote = {
     id: existingNote.id,

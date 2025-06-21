@@ -1,12 +1,11 @@
 import React, {useState} from "react";
-import axios from "axios"
-import PropTypes from "prop-types";
+import { useAuth } from "../contexts/AuthContext";
 
 async function loginUser(credentials) {
  return fetch('http://localhost:4000/login', {
    method: 'POST',
    headers: {
-     'Content-Type': 'application/json'
+     'Content-Type': 'application/json',
    },
    body: JSON.stringify(credentials)
  })
@@ -14,23 +13,20 @@ async function loginUser(credentials) {
 }
 
 
-function Login({openRegisterPage, setToken, setLoggedUserId, setLoggedUserEmail}) {
+function Login({openRegisterPage}) {
 
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [loginError, setLoginError] = useState(false);
+  const {login} = useAuth();
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const response = await loginUser({
+    const response = await login({
       email,
       password
     });
-    const {token, userId, userEmail, loginError} = response;
-    setToken(token);    
-    setLoggedUserId(userId);
-    setLoggedUserEmail(userEmail);
-    setLoginError(loginError);
+    setLoginError(response.error);
   }
 
   return (
@@ -52,11 +48,6 @@ function Login({openRegisterPage, setToken, setLoggedUserId, setLoggedUserEmail}
       </div>
     </div>
   );
-}
-
-Login.propTypes = {
-  setToken: PropTypes.func.isRequired,
-  setLoggedUserId: PropTypes.func.isRequired
 }
 
 export default Login;
