@@ -3,12 +3,37 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import fs from "fs";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
-const port = 4000;
-const saltRounds = 8;
+const port = process.env.PORT;
+const saltRounds = 12;
 let users = [];
 let notes = [];
+
+function generateToken(userId, email) {
+  return jwt.sign(
+    {
+      userId: userId,
+      email: email,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.JWT_EXPIRES_IN,
+    }
+  );
+}
+
+function verifyToken(token) {
+  try {
+    return jwt.verify(token, process.env.JWT_SECRET);
+  } catch (error) {
+    return null;
+  }
+}
 
 function loadUsers() {
   try {
@@ -87,16 +112,73 @@ function authenticateToken(req, res, next) {
   const token = authHeader && authHeader.split(" ")[1];
 
   if (!token) {
-    return res.sendStatus(401);
+    return res.status(401).json({
+      error: "Token dostępu wymagany",
+    });
   }
 
-  // Tutaj zweryfikuj prawdziwy JWT token
-  if (token === "test123") {
-    // Tymczasowe rozwiązanie
-    next();
-  } else {
-    res.sendStatus(403);
+  const decoded = verifyToken(token);
+  if (!decoded) {
+    return res.status(403).json({
+      error: "Nieprawidłowy lub wygasły token",
+    });
   }
+
+  // Dodaj dane użytkownika do request
+  req.user = {
+    userId: decoded.userId,
+    email: decoded.email,
+  };
+
+  next();
+}
+
+function validateLoginData(req, res, next) {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({
+      error: "Email i hasło są wymagane",
+    });
+  }
+
+  if (!email.includes("@")) {
+    return res.status(400).json({
+      error: "Nieprawidłowy format email",
+    });
+  }
+
+  next();
+}
+
+function validateRegistrationData(req, res, next) {
+  const { email, password, confirmPassword } = req.body;
+
+  if (!email || !password || !confirmPassword) {
+    return res.status(400).json({
+      error: "Wszystkie pola są wymagane",
+    });
+  }
+
+  if (!email.includes("@")) {
+    return res.status(400).json({
+      error: "Nieprawidłowy format email",
+    });
+  }
+
+  if (password.length < 3) {
+    return res.status(400).json({
+      error: "Hasło musi mieć co najmniej 3 znaki",
+    });
+  }
+
+  if (password !== confirmPassword) {
+    return res.status(400).json({
+      error: "Hasła nie są identyczne",
+    });
+  }
+
+  next();
 }
 
 // Middleware
@@ -105,156 +187,270 @@ app.use(cors());
 loadUsers();
 loadNotes();
 
-app.post("/login", (req, res) => {
-  const { email, password } = req.body;
+app.post("/login", validateLoginData, async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-  const searchIndex = users.findIndex((user) => user.email === email);
+    const user = users.find((user) => user.email === email);
 
-  if (searchIndex < 0) {
-    res.send({
-      token: "",
-      userId: -1,
-      loginError: true,
-    });
-  }
-
-  const user = users[searchIndex];
-  const storedHashedPassword = user.password;
-
-  bcrypt.compare(password, storedHashedPassword, (err, result) => {
-    if (result) {
-      res.send({
-        token: "test123",
-        userId: users[searchIndex].id,
-        userEmail: users[searchIndex].email,
-        loginError: false,
-      });
-    } else {
-      res.send({
-        token: "",
-        userId: -1,
-        loginError: true,
+    if (!user) {
+      return res.status(401).json({
+        error: "Nieprawidłowe dane logowania",
       });
     }
-  });
-});
 
-app.post("/register", (req, res) => {
-  const { email, password, confirmPassword } = req.body;
-  const searchIndex = users.findIndex((user) => user.email === email);
-  if (searchIndex >= 0) {
-    res.send({
-      emailOccupied: true,
-    });
-  } else if (password !== confirmPassword) {
-    res.send({
-      passwordConfirmFailed: true,
-    });
-  } else {
-    var newUserId = 1;
-    if (users.length > 0) {
-      newUserId = users[users.length - 1].id + 1;
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        error: "Nieprawidłowe dane logowania",
+      });
     }
-    bcrypt.hash(password, saltRounds, (err, hash) => {
-      if (err) {
-        console.log("Błąd hashowania hasła:", err);
-      } else {
-        let newUserData = {
-          id: newUserId,
-          email: email,
-          password: hash,
-        };
-        users.push(newUserData);
-        saveUsersToFile(users);
-        res.send({
-          registerSuccessfull: true,
-        });
-      }
+
+    // Generuj JWT token
+    const token = generateToken(user.id, user.email);
+
+    res.json({
+      token: token,
+      userId: user.id,
+      userEmail: user.email,
+      message: "Zalogowano pomyślnie",
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({
+      error: "Błąd serwera podczas logowania",
     });
   }
 });
 
-app.patch("/user", authenticateToken, (req, res) => {
-  const { newPassword, loggedUserId } = req.body;
-  const searchIndex = users.findIndex((user) => user.id == loggedUserId);
-  const storedHashedPassword = users[searchIndex].password;
-  bcrypt.hash(newPassword, saltRounds, (err, hash) => {
-    if (err) {
-      console.log("Błąd hashowania hasła:", err);
-    } else {
-      users[searchIndex].password = hash;
-      saveUsersToFile(users);
-      res.send({
-        changeSuccessfull: "Hasło zmieniono pomyślnie.",
+app.post("/register", validateRegistrationData, async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const existingUser = users.find((user) => user.email === email);
+    if (existingUser) {
+      return res.status(409).json({
+        error: "Na podany adres email zostało już założone konto",
       });
     }
-  });
-});
 
-app.delete("/user", authenticateToken, (req, res) => {
-  const loggedUserId = req.body.loggedUserId;
-  const searchIndex = users.findIndex((user) => user.id == loggedUserId);
-  users = users.filter((user) => user.id != loggedUserId);
-  notes = notes.filter((note) => note.userId != loggedUserId);
-  saveUsersToFile(users);
-  saveNotesToFile(notes);
-  res.send({
-    deleteSuccessfull:
-      "Konto usunięte pomyślnie. Za 3 sekundy nastąpi automatyczne wylogowanie.",
-  });
-});
+    const newUserId = users.length > 0 ? users[users.length - 1].id + 1 : 1;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-app.post("/notes", authenticateToken, (req, res) => {
-  var newId = 1;
-  if (notes.length > 0) {
-    newId = notes[notes.length - 1].id + 1;
+    const newUser = {
+      id: newUserId,
+      email: email,
+      password: hashedPassword,
+    };
+
+    users.push(newUser);
+    saveUsersToFile(users);
+
+    res.status(201).json({
+      message: "Konto zostało założone pomyślnie",
+    });
+  } catch (error) {
+    console.error("Registration error:", error);
+    res.status(500).json({
+      error: "Błąd serwera podczas rejestracji",
+    });
   }
-  const userId = req.body.userId;
-  const title = req.body.title;
-  const content = req.body.content;
-  const newNote = {
-    id: newId,
-    userId: userId,
-    title: title,
-    content: content,
-  };
-  notes.push(newNote);
-  saveNotesToFile(notes);
-  res.send(newNote);
+});
+
+app.patch("/user", authenticateToken, async (req, res) => {
+  try {
+    const { newPassword } = req.body;
+    const userId = req.user.userId; // Z JWT tokena
+
+    if (!newPassword || newPassword.length < 3) {
+      return res.status(400).json({
+        error: "Nowe hasło musi mieć co najmniej 3 znaki",
+      });
+    }
+
+    const userIndex = users.findIndex((user) => user.id === userId);
+    if (userIndex === -1) {
+      return res.status(404).json({
+        error: "Użytkownik nie znaleziony",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+    users[userIndex].password = hashedPassword;
+
+    saveUsersToFile(users);
+
+    res.json({
+      message: "Hasło zmieniono pomyślnie",
+    });
+  } catch (error) {
+    console.error("Change password error:", error);
+    res.status(500).json({
+      error: "Błąd serwera podczas zmiany hasła",
+    });
+  }
+});
+
+app.delete("/user", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId; // Z JWT tokena
+
+    users = users.filter((user) => user.id !== userId);
+    notes = notes.filter((note) => note.userId !== userId);
+
+    saveUsersToFile(users);
+    saveNotesToFile(notes);
+
+    res.json({
+      message: "Konto usunięte pomyślnie",
+    });
+  } catch (error) {
+    console.error("Delete account error:", error);
+    res.status(500).json({
+      error: "Błąd serwera podczas usuwania konta",
+    });
+  }
+});
+
+app.post("/notes", authenticateToken, async (req, res) => {
+  try {
+    const { title, content } = req.body;
+    const userId = req.user.userId; // Z JWT tokena
+
+    if (!title || !content) {
+      return res.status(400).json({
+        error: "Tytuł i treść są wymagane",
+      });
+    }
+
+    const newId = notes.length > 0 ? notes[notes.length - 1].id + 1 : 1;
+
+    const newNote = {
+      id: newId,
+      userId: userId,
+      title: title,
+      content: content,
+      createdAt: new Date().toISOString(),
+    };
+
+    notes.push(newNote);
+    saveNotesToFile(notes);
+
+    res.status(201).json(newNote);
+  } catch (error) {
+    console.error("Create note error:", error);
+    res.status(500).json({
+      error: "Błąd serwera podczas tworzenia notatki",
+    });
+  }
 });
 
 app.get("/notes/:userId", authenticateToken, (req, res) => {
-  const loggedUserId = req.params.userId;
-  const result = notes.filter((note) => note.userId == loggedUserId);
-  res.send(result);
-});
+  try {
+    const requestedUserId = parseInt(req.params.userId);
+    const tokenUserId = req.user.userId;
 
-app.delete("/notes/:id", authenticateToken, (req, res) => {
-  const noteId = parseInt(req.params.id);
-  const searchIndex = notes.findIndex((note) => note.id === noteId);
-  if (searchIndex > -1) {
-    notes.splice(searchIndex, 1);
-    saveNotesToFile(notes);
-    res.send({ alert: "Notatka usunięta pomyślnie!" });
-  } else {
-    res
-      .status(404)
-      .json({ error: `Notatka z id równym ${noteId} nie znaleziona.` });
+    // Sprawdź czy użytkownik próbuje dostać swoje notatki
+    if (requestedUserId !== tokenUserId) {
+      return res.status(403).json({
+        error: "Brak dostępu do notatek tego użytkownika",
+      });
+    }
+
+    const userNotes = notes.filter((note) => note.userId === requestedUserId);
+    res.json(userNotes);
+  } catch (error) {
+    console.error("Get notes error:", error);
+    res.status(500).json({
+      error: "Błąd serwera podczas pobierania notatek",
+    });
   }
 });
 
-app.patch("/notes", authenticateToken, (req, res) => {
-  const existingNote = notes.find((note) => note.id === req.body.id);
-  const newNote = {
-    id: existingNote.id,
-    userId: existingNote.userId,
-    title: req.body.title || existingNote.title,
-    content: req.body.content || existingNote.content,
-  };
-  const searchIndex = notes.findIndex((note) => note.id === req.body.id);
-  notes[searchIndex] = newNote;
-  saveNotesToFile(notes);
-  res.send({ alert: "Notatka edytowana pomyślnie!" });
+app.delete("/notes/:id", authenticateToken, async (req, res) => {
+  try {
+    const noteId = parseInt(req.params.id);
+    const userId = req.user.userId;
+
+    const noteIndex = notes.findIndex((note) => note.id === noteId);
+
+    if (noteIndex === -1) {
+      return res.status(404).json({
+        error: "Notatka nie znaleziona",
+      });
+    }
+
+    // Sprawdź czy notatka należy do użytkownika
+    if (notes[noteIndex].userId !== userId) {
+      return res.status(403).json({
+        error: "Brak dostępu do tej notatki",
+      });
+    }
+
+    notes.splice(noteIndex, 1);
+    saveNotesToFile(notes);
+
+    res.json({
+      message: "Notatka usunięta pomyślnie",
+    });
+  } catch (error) {
+    console.error("Delete note error:", error);
+    res.status(500).json({
+      error: "Błąd serwera podczas usuwania notatki",
+    });
+  }
+});
+
+app.patch("/notes", authenticateToken, async (req, res) => {
+  try {
+    const { id, title, content } = req.body;
+    const userId = req.user.userId;
+
+    if (!id || !title || !content) {
+      return res.status(400).json({
+        error: "ID, tytuł i treść są wymagane",
+      });
+    }
+
+    const noteIndex = notes.findIndex((note) => note.id === id);
+
+    if (noteIndex === -1) {
+      return res.status(404).json({
+        error: "Notatka nie znaleziona",
+      });
+    }
+
+    // Sprawdź czy notatka należy do użytkownika
+    if (notes[noteIndex].userId !== userId) {
+      return res.status(403).json({
+        error: "Brak dostępu do tej notatki",
+      });
+    }
+
+    notes[noteIndex] = {
+      ...notes[noteIndex],
+      title: title,
+      content: content,
+      updatedAt: new Date().toISOString(),
+    };
+
+    saveNotesToFile(notes);
+
+    res.json({
+      message: "Notatka zaktualizowana pomyślnie",
+      note: notes[noteIndex],
+    });
+  } catch (error) {
+    console.error("Update note error:", error);
+    res.status(500).json({
+      error: "Błąd serwera podczas aktualizacji notatki",
+    });
+  }
+});
+
+app.get("/health", (req, res) => {
+  res.json({ status: "OK", timestamp: new Date().toISOString() });
 });
 
 app.listen(port, () => {
