@@ -14,72 +14,110 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  // Sprawdź token przy starcie aplikacji
   useEffect(() => {
-    // Bezpieczniejsze pobieranie z localStorage
+    checkAuthState();
+  }, []);
+
+  const checkAuthState = async () => {
     try {
       const savedToken = localStorage.getItem('token');
       const savedUser = localStorage.getItem('user');
       
       if (savedToken && savedUser) {
-        setToken(JSON.parse(savedToken));
-        setUser(JSON.parse(savedUser));
+        const parsedToken = JSON.parse(savedToken);
+        const parsedUser = JSON.parse(savedUser);
+        
+        // Sprawdź czy token nie wygasł
+        const isTokenValid = await validateToken(parsedToken);
+        
+        if (isTokenValid) {
+          setToken(parsedToken);
+          setUser(parsedUser);
+        } else {
+          // Token wygasł - wyczyść dane
+          clearAuthData();
+        }
       }
     } catch (error) {
-      console.error('Error loading auth data:', error);
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      console.error('Error checking auth state:', error);
+      clearAuthData();
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
-  async function login(credentials) {
+  const validateToken = async (token) => {
     try {
+      const response = await fetch('http://localhost:4000/health', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      return response.ok;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const clearAuthData = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setToken(null);
+    setUser(null);
+    setError(null);
+  };
+
+  const login = async (credentials) => {
+    try {
+      setError(null);
+      
       const response = await fetch('http://localhost:4000/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials)
       });
       
-      if (!response.ok) {
-        throw new Error('Login failed');
-      }
-      
       const data = await response.json();
       
-      if (data.token) {
-        setToken(data.token);
-        setUser({ id: data.userId, email: data.userEmail });
-        
-        localStorage.setItem('token', JSON.stringify(data.token));
-        localStorage.setItem('user', JSON.stringify({ 
+      if (response.ok && data.token) {
+        const userData = { 
           id: data.userId, 
           email: data.userEmail 
-        }));
+        };
+        
+        setToken(data.token);
+        setUser(userData);
+        
+        localStorage.setItem('token', JSON.stringify(data.token));
+        localStorage.setItem('user', JSON.stringify(userData));
         
         return { success: true };
+      } else {
+        setError(data.error || 'Błąd logowania');
+        return { success: false, error: data.error };
       }
-      
-      return { success: false, error: 'Invalid credentials' };
     } catch (error) {
-      return { success: false, error: error.message };
+      const errorMessage = 'Błąd połączenia z serwerem';
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
     }
   };
 
   const logout = () => {
-    setToken(null);
-    setUser(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    clearAuthData();
   };
 
   const value = {
     user,
     token,
+    loading,
+    error,
     login,
     logout,
-    loading
+    clearError: () => setError(null)
   };
 
   return (

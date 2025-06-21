@@ -18,11 +18,21 @@ class ApiService {
     try {
       const response = await fetch(`${this.baseURL}${endpoint}`, config);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      // Jeśli token wygasł, wyloguj użytkownika
+      if (response.status === 401 || response.status === 403) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.reload(); // Przeładuj stronę aby wyświetlić login
+        return;
       }
 
-      return await response.json();
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || `HTTP error! status: ${response.status}`);
+      }
+
+      return data;
     } catch (error) {
       console.error("API request failed:", error);
       throw error;
