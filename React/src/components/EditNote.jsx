@@ -3,7 +3,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from "@mui/icons-material/Cancel";
 
 async function saveEditedNote (editedNote){
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = JSON.parse(sessionStorage.getItem("token"));
   return fetch(`http://localhost:4000/notes`, {
     method: "PATCH",
     headers: {

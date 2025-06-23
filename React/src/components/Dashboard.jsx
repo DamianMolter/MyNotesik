@@ -5,7 +5,7 @@ import CreateArea from "./CreateArea";
 import Note from "./Note";
 
 async function getNotes(loggedUserId) {
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = JSON.parse(sessionStorage.getItem("token"));
   return fetch(`http://localhost:4000/notes/${loggedUserId}`, {
     headers: {
       "Content-Type": "application/json",
@@ -15,7 +15,7 @@ async function getNotes(loggedUserId) {
 }
 
 async function sendDeleteNoteRequest(id) {
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = JSON.parse(sessionStorage.getItem("token"));
   return fetch(`http://localhost:4000/notes/${id}`, {
     method: "DELETE",
     headers: {
