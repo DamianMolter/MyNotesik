@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 
 async function deleteAllUserData(loggedUserId) {
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = JSON.parse(sessionStorage.getItem("token"));
  return fetch(`http://localhost:4000/user`, {
    method: 'DELETE',
    headers: {

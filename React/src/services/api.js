@@ -4,7 +4,7 @@ class ApiService {
   }
 
   async request(endpoint, options = {}) {
-    const token = JSON.parse(localStorage.getItem("token") || "null");
+    const token = JSON.parse(sessionStorage.getItem("token") || "null");
 
     const config = {
       headers: {
@@ -20,8 +20,8 @@ class ApiService {
 
       // Jeśli token wygasł, wyloguj użytkownika
       if (response.status === 401 || response.status === 403) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("user");
         window.location.reload(); // Przeładuj stronę aby wyświetlić login
         return;
       }

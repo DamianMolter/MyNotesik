@@ -23,8 +23,8 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuthState = async () => {
     try {
-      const savedToken = localStorage.getItem('token');
-      const savedUser = localStorage.getItem('user');
+      const savedToken = sessionStorage.getItem('token');
+      const savedUser = sessionStorage.getItem('user');
       
       if (savedToken && savedUser) {
         const parsedToken = JSON.parse(savedToken);
@@ -63,8 +63,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const clearAuthData = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
     setToken(null);
     setUser(null);
     setError(null);
@@ -91,8 +91,8 @@ export const AuthProvider = ({ children }) => {
         setToken(data.token);
         setUser(userData);
         
-        localStorage.setItem('token', JSON.stringify(data.token));
-        localStorage.setItem('user', JSON.stringify(userData));
+        sessionStorage.setItem('token', JSON.stringify(data.token));
+        sessionStorage.setItem('user', JSON.stringify(userData));
         
         return { success: true };
       } else {
