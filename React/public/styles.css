@@ -505,3 +505,266 @@ form.create-note button {
 .modal-content p b {
   color: #f5ba13;
 }
+
+.chat-button {
+          color: #2196F3 !important;
+        }
+        
+        .chatbot-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0, 0, 0, 0.7);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+          animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        .chatbot-container {
+          background: white;
+          border-radius: 12px;
+          width: 90%;
+          max-width: 500px;
+          height: 600px;
+          display: flex;
+          flex-direction: column;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+          animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+          from { transform: translateY(-20px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .chatbot-header {
+          background: #f5ba13;
+          color: white;
+          padding: 15px 20px;
+          border-radius: 12px 12px 0 0;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        
+        .chatbot-title {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-weight: bold;
+        }
+        
+        .chatbot-close {
+          background: none;
+          border: none;
+          color: white;
+          cursor: pointer;
+          padding: 5px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .chatbot-close:hover {
+          background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .chatbot-messages {
+          flex: 1;
+          padding: 20px;
+          overflow-y: auto;
+          background: #f8f9fa;
+        }
+        
+        .message {
+          display: flex;
+          gap: 10px;
+          margin-bottom: 15px;
+          animation: messageSlide 0.3s ease-out;
+        }
+        
+        @keyframes messageSlide {
+          from { transform: translateX(-20px); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .message.user {
+          flex-direction: row-reverse;
+        }
+        
+        .message-avatar {
+          width: 35px;
+          height: 35px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        
+        .message.bot .message-avatar {
+          background: #e3f2fd;
+          color: #2196F3;
+        }
+        
+        .message.user .message-avatar {
+          background: #f5ba13;
+          color: white;
+        }
+        
+        .message-content {
+          max-width: 70%;
+          padding: 12px 16px;
+          border-radius: 18px;
+          font-size: 14px;
+          line-height: 1.4;
+          white-space: pre-wrap;
+        }
+        
+        .message.bot .message-content {
+          background: white;
+          border: 1px solid #e0e0e0;
+          margin-right: auto;
+        }
+        
+        .message.user .message-content {
+          background: #f5ba13;
+          color: white;
+          margin-left: auto;
+        }
+        
+        .typing-indicator {
+          display: flex;
+          gap: 4px;
+          padding: 8px 0;
+        }
+        
+        .typing-indicator span {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #bbb;
+          animation: typing 1.4s infinite ease-in-out;
+        }
+        
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes typing {
+          0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+          40% { transform: scale(1); opacity: 1; }
+        }
+        
+        .chatbot-input {
+          padding: 15px 20px;
+          border-top: 1px solid #e0e0e0;
+          display: flex;
+          gap: 10px;
+          align-items: flex-end;
+          background: white;
+          border-radius: 0 0 12px 12px;
+        }
+        
+        .chatbot-input textarea {
+          flex: 1;
+          border: 1px solid #ddd;
+          border-radius: 20px;
+          padding: 10px 15px;
+          resize: none;
+          outline: none;
+          font-family: inherit;
+          font-size: 14px;
+          max-height: 80px;
+        }
+        
+        .chatbot-input textarea:focus {
+          border-color: #f5ba13;
+          box-shadow: 0 0 0 2px rgba(245, 186, 19, 0.2);
+        }
+        
+        .chatbot-input button {
+          background: #f5ba13;
+          border: none;
+          color: white;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background-color 0.2s;
+        }
+        
+        .chatbot-input button:hover:not(:disabled) {
+          background: #e0a70e;
+        }
+        
+        .chatbot-input button:disabled {
+          background: #ccc;
+          cursor: not-allowed;
+        }
+        
+        .edit-note-form {
+          background: #fff;
+          border-radius: 7px;
+          box-shadow: 0 2px 5px #ccc;
+          padding: 10px;
+          width: 240px;
+          margin: 16px;
+          float: left;
+          position: relative;
+          display: flex;
+          flex-direction: column;
+        }
+        
+        .edit-note-form input,
+        .edit-note-form textarea {
+          width: 100%;
+          border: none;
+          padding: 4px;
+          outline: none;
+          font-size: 1.2em;
+          font-family: inherit;
+          resize: none;
+          margin-bottom: 10px;
+        }
+        
+        .edit-note-form input {
+          font-weight: bold;
+        }
+        
+        .form-buttons {
+          display: flex;
+          justify-content: flex-end;
+          gap: 8px;
+          margin-top: 10px;
+        }
+        
+        .form-buttons button {
+          background: #f5ba13;
+          color: #fff;
+          border: none;
+          border-radius: 7px;
+          padding: 8px 12px;
+          font-size: 0.9em;
+          font-family: inherit;
+          cursor: pointer;
+          outline: none;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+          transition: background-color 0.3s ease;
+        }
+        
+        .form-buttons button:hover {
+          background: #e0a70e;
+        }
