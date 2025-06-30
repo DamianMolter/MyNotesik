@@ -1,9 +1,8 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import CloseIcon from '@mui/icons-material/Close';
 import SendIcon from '@mui/icons-material/Send';
 import PersonIcon from '@mui/icons-material/Person';
-
 
 function NoteChatbot({ note, isOpen, onClose }) {
   const [messages, setMessages] = useState([
@@ -15,6 +14,29 @@ function NoteChatbot({ note, isOpen, onClose }) {
   ]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const chatBodyRef = useRef();
+  const messagesEndRef = useRef(); // Dodatkowy ref dla lepszego scroll
+
+  // Funkcja do płynnego przewijania na dół
+  const scrollToBottom = () => {
+    if (chatBodyRef.current) {
+      chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
+    }
+    // Alternatywnie można użyć messagesEndRef
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Auto-scroll po każdej zmianie wiadomości lub stanu typing
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isTyping]);
+
+  // Auto-scroll po otwarciu chatbota
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => scrollToBottom(), 100); // Małe opóźnienie dla animacji
+    }
+  }, [isOpen]);
 
   const generateBotResponse = (userMessage) => {
     const message = userMessage.toLowerCase();
@@ -81,7 +103,7 @@ function NoteChatbot({ note, isOpen, onClose }) {
     return `🤔 Interesujące pytanie! Na podstawie Twojej notatki "${note.title}" mogę pomóc w analizie treści. Spróbuj zapytać o podsumowanie, statystyki, usprawnienia lub zadania. Możesz też napisać "pomoc" aby zobaczyć wszystkie moje możliwości.`;
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!inputText.trim()) return;
 
     const userMessage = {
@@ -91,15 +113,16 @@ function NoteChatbot({ note, isOpen, onClose }) {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = inputText;
     setInputText('');
     setIsTyping(true);
 
     // Symulacja myślenia bota
     setTimeout(() => {
       const botResponse = {
-        id: messages.length + 2,
+        id: Date.now(), // Użyj timestamp dla unikalności
         type: 'bot',
-        text: generateBotResponse(inputText)
+        text: generateBotResponse(currentInput)
       };
       
       setMessages(prev => [...prev, botResponse]);
@@ -129,7 +152,7 @@ function NoteChatbot({ note, isOpen, onClose }) {
           </button>
         </div>
         
-        <div className="chatbot-messages">
+        <div ref={chatBodyRef} className="chatbot-messages">
           {messages.map(message => (
             <div key={message.id} className={`message ${message.type}`}>
               <div className="message-avatar">
@@ -157,6 +180,9 @@ function NoteChatbot({ note, isOpen, onClose }) {
               </div>
             </div>
           )}
+          
+          {/* Invisible element for scroll target */}
+          <div ref={messagesEndRef} />
         </div>
         
         <div className="chatbot-input">
