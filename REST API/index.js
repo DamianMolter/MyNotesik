@@ -453,6 +453,6 @@ app.get("/health", (req, res) => {
   res.json({ status: "OK", timestamp: new Date().toISOString() });
 });
 
-app.listen(port, () => {
+app.listen(4000, () => {
   console.log(`API is running at http://localhost:${port}`);
 });
