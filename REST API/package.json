@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js -p 4000",
     "api": "json-server db.json -p 4000",
     "pm2": "pm2 start json-server --name rest-api -- db.json -p 4000",
     "pm2:stop": "pm2 stop rest-api",
