@@ -51,8 +51,8 @@ class ApiService {
     });
   }
 
-  async updateNote(noteId, noteData) {
-    return this.request(`/notes/${noteId}`, {
+  async updateNote(noteData) {
+    return this.request(`/notes/${noteData.id}`, {
       method: "PUT",
       body: JSON.stringify(noteData),
     });
