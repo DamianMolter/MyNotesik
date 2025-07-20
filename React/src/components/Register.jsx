@@ -1,16 +1,5 @@
 import React, {useState} from "react";
-
-
-async function registerUser(credentials) {
- return fetch('http://localhost:4000/register', {
-   method: 'POST',
-   headers: {
-     'Content-Type': 'application/json'
-   },
-   body: JSON.stringify(credentials)
- })
-   .then((data) => data.json())
-}
+import { apiService } from "../services/api";
 
 function Register({openLoginPage}) {
 
@@ -23,7 +12,7 @@ function Register({openLoginPage}) {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const response = await registerUser({
+    const response = await apiService.register({
       email,
       password,
       confirmPassword
