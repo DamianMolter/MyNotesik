@@ -1,6 +1,6 @@
 class ApiService {
   constructor() {
-    this.baseURL = "http://localhost:4000";
+    this.baseURL = import.meta.env.VITE_API_URL;
   }
 
   async request(endpoint, options = {}) {
@@ -44,10 +44,10 @@ class ApiService {
     return this.request(`/notes/${userId}`);
   }
 
-  async createNote(noteData) {
+  async saveNote(notedata) {
     return this.request("/notes", {
       method: "POST",
-      body: JSON.stringify(noteData),
+      body: JSON.stringify(notedata),
     });
   }
 
@@ -76,6 +76,16 @@ class ApiService {
     return this.request("/register", {
       method: "POST",
       body: JSON.stringify(userData),
+    });
+  }
+
+  async changePassword(newPassword, loggedUserId) {
+    return this.request("/user", {
+      method: "PATCH",
+      body: JSON.stringify({
+        newPassword: newPassword,
+        loggedUserId: loggedUserId,
+      }),
     });
   }
 }

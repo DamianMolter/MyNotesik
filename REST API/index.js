@@ -331,7 +331,6 @@ app.post("/notes", authenticateToken, async (req, res) => {
       userId: userId,
       title: title,
       content: content,
-      createdAt: new Date().toISOString(),
     };
 
     notes.push(newNote);
@@ -432,7 +431,6 @@ app.patch("/notes", authenticateToken, async (req, res) => {
       ...notes[noteIndex],
       title: title,
       content: content,
-      updatedAt: new Date().toISOString(),
     };
 
     saveNotesToFile(notes);

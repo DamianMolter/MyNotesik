@@ -1,20 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
-
-async function changePassword(newPassword, loggedUserId) {
-  const token = JSON.parse(sessionStorage.getItem("token"));
-  return fetch(`http://localhost:4000/user`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`,
-    },
-    body: JSON.stringify({
-      newPassword: newPassword,
-      loggedUserId: loggedUserId,
-    }),
-  }).then((data) => data.json());
-}
+import { apiService } from "../services/api";
 
 function ChangePasswordModal({ onClose, loggedUserId }) {
   const [newPassword, setNewPassword] = useState("");
@@ -34,7 +20,7 @@ function ChangePasswordModal({ onClose, loggedUserId }) {
       setMessage("Nowe hasło musi mieć co najmniej 3 znaki.");
       return;
     }
-    const response = await changePassword(newPassword, user.id);
+    const response = await apiService.changePassword(newPassword, user.id);
     console.log(response);
     setChangeSuccessfull(response.message);
     setTimeout(() => {

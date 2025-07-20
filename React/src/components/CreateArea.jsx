@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { apiService } from "../services/api";
 import AddIcon from "@mui/icons-material/Add";
 import { Fab } from "@mui/material";
 import { Zoom } from "@mui/material";
@@ -42,12 +43,18 @@ function CreateArea({ onAdd, loggedUserId }) {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const newNote = await saveNote({
+    const response = await apiService.saveNote({
       userId: note.userId,
       title: note.title,
       content: note.content
     });
-    onAdd(newNote);
+    const createdNote = {
+      id: response.id,
+      userId: note.userId,
+      title: note.title,
+      content: note.content
+    }
+    onAdd(createdNote);
     setNote({
     id: 0,
     userId: loggedUserId,
