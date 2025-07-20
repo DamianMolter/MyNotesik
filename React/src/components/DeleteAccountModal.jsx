@@ -1,20 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-
-async function deleteAllUserData(loggedUserId) {
-  const token = JSON.parse(sessionStorage.getItem("token"));
- return fetch(`http://localhost:4000/user`, {
-   method: 'DELETE',
-   headers: {
-     'Content-Type': 'application/json',
-     "Authorization": `Bearer ${token}`,
-   },
-   body: JSON.stringify({
-      loggedUserId: loggedUserId
-   })
- })
-   .then((data) => data.json())
-}
+import { apiService } from '../services/api';
 
 function DeleteAccountModal({ onClose}) {
   const [confirmText, setConfirmText] = useState('');
@@ -32,7 +18,7 @@ function DeleteAccountModal({ onClose}) {
       return;
     }
 
-    const result = await deleteAllUserData(user.id);
+    const result = await apiService.deleteUser(user.id);
     setDeleteSuccessfull(result.message);
 
     setTimeout(() => {

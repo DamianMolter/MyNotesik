@@ -5,9 +5,8 @@ import { useAuth } from "../contexts/AuthContext";
 import { Fab } from "@mui/material";
 import { Zoom } from "@mui/material";
 
-function CreateArea({ onAdd}) {
-  const {user} = useAuth();
-  const [error, setError] = useState(false);
+function CreateArea({ onAdd }) {
+  const { user } = useAuth();
   const [isExpanded, setExpanded] = useState(false);
 
   let [note, setNote] = useState({
@@ -34,28 +33,24 @@ function CreateArea({ onAdd}) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await apiService.saveNote({
-        userId: note.userId,
-        title: note.title,
-        content: note.content,
-      });
-      const createdNote = {
-        id: response.id,
-        userId: note.userId,
-        title: note.title,
-        content: note.content,
-      };
-      onAdd(createdNote);
-      setNote({
-        id: 0,
-        userId: user.id,
-        title: "",
-        content: "",
-      });
-    } catch (error) {
-      setError(true);
-    }
+    const response = await apiService.saveNote({
+      userId: note.userId,
+      title: note.title,
+      content: note.content,
+    });
+    const createdNote = {
+      id: response.id,
+      userId: note.userId,
+      title: note.title,
+      content: note.content,
+    };
+    onAdd(createdNote);
+    setNote({
+      id: 0,
+      userId: user.id,
+      title: "",
+      content: "",
+    });
   };
 
   return (

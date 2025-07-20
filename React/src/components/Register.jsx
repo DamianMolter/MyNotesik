@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import { use } from "react";
 
 
 async function registerUser(credentials) {
@@ -32,7 +31,7 @@ function Register({openLoginPage}) {
     const {emailOccupied, passwordConfirmFailed, registerSuccessfull} = response;
     setEmailOccupied(emailOccupied);    
     setPasswordConfirmFailed(passwordConfirmFailed);
-    setRegisterSuccessfull(registerSuccessfull);
+    setRegisterSuccessfull(true);
      setTimeout(() => {
       openLoginPage(true);
     }, 1500);

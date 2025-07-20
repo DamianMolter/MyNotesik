@@ -88,6 +88,15 @@ class ApiService {
       }),
     });
   }
+
+  async deleteUser(userId) {
+    return this.request("/user", {
+      method: "DELETE",
+      body: JSON.stringify({
+        userId: userId,
+      }),
+    });
+  }
 }
 
 export const apiService = new ApiService();
