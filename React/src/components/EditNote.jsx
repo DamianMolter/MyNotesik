@@ -1,18 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { apiService } from "../services/api";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from "@mui/icons-material/Cancel";
-
-async function saveEditedNote (editedNote){
-  const token = JSON.parse(sessionStorage.getItem("token"));
-  return fetch(`http://localhost:4000/notes`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`,
-    },
-    body: JSON.stringify(editedNote)
-  }).then((data) => data.json());
-}
 
 function EditNote(props) {
 
@@ -25,7 +14,7 @@ function EditNote(props) {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const result = await saveEditedNote(newNote);
+    const result = await apiService.updateNote(newNote);
     props.setEditNote(0);
     props.setNote(newNote);
   }

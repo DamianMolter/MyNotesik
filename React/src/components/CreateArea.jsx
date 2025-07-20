@@ -1,26 +1,17 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { apiService } from "../services/api";
 import AddIcon from "@mui/icons-material/Add";
+import { useAuth } from "../contexts/AuthContext";
 import { Fab } from "@mui/material";
 import { Zoom } from "@mui/material";
 
-async function saveNote(note) {
-  const token = JSON.parse(sessionStorage.getItem("token"));
-  return fetch("http://localhost:4000/notes", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`,
-    },
-    body: JSON.stringify(note),
-  }).then((data) => data.json());
-}
-
-function CreateArea({ onAdd, loggedUserId }) {
+function CreateArea({ onAdd }) {
+  const { user } = useAuth();
   const [isExpanded, setExpanded] = useState(false);
 
   let [note, setNote] = useState({
     id: 0,
-    userId: loggedUserId,
+    userId: user.id,
     title: "",
     content: "",
   });
@@ -40,21 +31,27 @@ function CreateArea({ onAdd, loggedUserId }) {
     setExpanded(true);
   }
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newNote = await saveNote({
+    const response = await apiService.saveNote({
       userId: note.userId,
       title: note.title,
-      content: note.content
+      content: note.content,
     });
-    onAdd(newNote);
+    const createdNote = {
+      id: response.id,
+      userId: note.userId,
+      title: note.title,
+      content: note.content,
+    };
+    onAdd(createdNote);
     setNote({
-    id: 0,
-    userId: loggedUserId,
-    title: "",
-    content: "",
-  });
-  }
+      id: 0,
+      userId: user.id,
+      title: "",
+      content: "",
+    });
+  };
 
   return (
     <div>

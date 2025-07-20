@@ -331,7 +331,6 @@ app.post("/notes", authenticateToken, async (req, res) => {
       userId: userId,
       title: title,
       content: content,
-      createdAt: new Date().toISOString(),
     };
 
     notes.push(newNote);
@@ -402,18 +401,19 @@ app.delete("/notes/:id", authenticateToken, async (req, res) => {
   }
 });
 
-app.patch("/notes", authenticateToken, async (req, res) => {
+app.put("/notes/:id", authenticateToken, async (req, res) => {
   try {
-    const { id, title, content } = req.body;
+    const noteId = parseInt(req.params.id);
+    const { title, content } = req.body;
     const userId = req.user.userId;
 
-    if (!id || !title || !content) {
+    if (!noteId || !title || !content) {
       return res.status(400).json({
         error: "ID, tytuł i treść są wymagane",
       });
     }
 
-    const noteIndex = notes.findIndex((note) => note.id === id);
+    const noteIndex = notes.findIndex((note) => note.id === noteId);
 
     if (noteIndex === -1) {
       return res.status(404).json({
@@ -432,7 +432,6 @@ app.patch("/notes", authenticateToken, async (req, res) => {
       ...notes[noteIndex],
       title: title,
       content: content,
-      updatedAt: new Date().toISOString(),
     };
 
     saveNotesToFile(notes);
