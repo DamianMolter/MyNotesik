@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
 
   const validateToken = async (token) => {
     try {
-      const response = await fetch('http://localhost:4000/health', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/health`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -74,11 +74,13 @@ export const AuthProvider = ({ children }) => {
     try {
       setError(null);
       
-      const response = await fetch('http://localhost:4000/login', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials)
       });
+
+      console.log(response);
       
       const data = await response.json();
       
