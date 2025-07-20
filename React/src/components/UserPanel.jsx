@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ChangePasswordModal from "./ChangePasswordModal";
 import DeleteAccountModal from "./DeleteAccountModal";
