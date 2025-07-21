@@ -1,4 +1,5 @@
 import App from "./App";
+import { useEffect } from "react";
 import { AuthProvider } from "../contexts/AuthContext";
 
 function MainApp() {
