@@ -30,7 +30,7 @@ export const useNotes = () => {
 
   const addNote = async (noteData) => {
     try {
-      const newNote = await apiService.createNote({
+      const newNote = await apiService.saveNote({
         ...noteData,
         userId: user.id,
       });
@@ -42,9 +42,9 @@ export const useNotes = () => {
     }
   };
 
-  const updateNote = async (noteId, noteData) => {
+  const updateNote = async (noteData) => {
     try {
-      await apiService.updateNote(noteId, noteData);
+      await apiService.updateNote(noteData);
       setNotes((prev) =>
         prev.map((note) =>
           note.id === noteId ? { ...note, ...noteData } : note

@@ -12,6 +12,11 @@ function Register({openLoginPage}) {
 
   const handleSubmit = async e => {
     e.preventDefault();
+
+    if(password != confirmPassword){
+      setPasswordConfirmFailed(true);
+    }
+
     const response = await apiService.register({
       email,
       password,
@@ -19,7 +24,6 @@ function Register({openLoginPage}) {
     });
     const {emailOccupied, passwordConfirmFailed, registerSuccessfull} = response;
     setEmailOccupied(emailOccupied);    
-    setPasswordConfirmFailed(passwordConfirmFailed);
     setRegisterSuccessfull(true);
      setTimeout(() => {
       openLoginPage(true);
@@ -36,7 +40,7 @@ function Register({openLoginPage}) {
           <input type="password" placeholder="Potwierdź hasło" onChange={event => {setConfirmPassword(event.target.value)}}/>
           <button type="submit">Zarejestruj się</button>
           {registerSuccessfull && <p style={{color: "green", fontWeight: "bold"}}>Twoje konto zostało założone pomyślnie! Zaloguj się!</p>}
-          {passwordConfirmFailed && <p style={{color: "red", fontWeight: "bold"}}>Podane hasla nie są identyczne!</p>}
+          {passwordConfirmFailed && <p style={{color: "red", fontWeight: "bold"}}>Podane hasła nie są identyczne!</p>}
           {emailOccupied && <p style={{color: "red", fontWeight: "bold"}}>Na podany adres email zostało już założone konto!</p>}
           <p className="login-register-text">
             Masz już konto?{" "}

@@ -43,13 +43,15 @@ const generateBotResponse = async (userMessage) => {
   try {
     setError(null);
 
-    // Sprawdź czy klucz API jest dostępny
     const apiKey = import.meta.env?.VITE_GEMINI_API_KEY;
-    console.log('API Key available:', !!apiKey);
-    console.log('import.meta.env:', import.meta.env);
     
     if (!apiKey) {
       throw new Error('Brak klucza API. Sprawdź plik .env');
+    }
+
+    // Walidacja klucza API
+    if (typeof apiKey !== 'string' || apiKey.length < 10) {
+      throw new Error('Nieprawidłowy klucz API');
     }
 
     // Przygotuj kontekst z treścią notatki
