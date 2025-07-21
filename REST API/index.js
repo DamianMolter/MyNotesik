@@ -14,6 +14,10 @@ const saltRounds = 12;
 let users = [];
 let notes = [];
 
+const loginAttempts = new Map();
+const MAX_LOGIN_ATTEMPTS = 5;
+const LOCKOUT_TIME = 15 * 60 * 1000; // 15 minut
+
 function generateToken(userId, email) {
   return jwt.sign(
     {
@@ -192,35 +196,74 @@ const corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
+const rateLimitLogin = (req, res, next) => {
+  const ip = req.ip || req.connection.remoteAddress;
+  const now = Date.now();
+
+  if (!loginAttempts.has(ip)) {
+    loginAttempts.set(ip, { count: 0, lockoutUntil: null });
+  }
+
+  const attempts = loginAttempts.get(ip);
+
+  if (attempts.lockoutUntil && now < attempts.lockoutUntil) {
+    return res.status(429).json({
+      error: "Zbyt wiele prób logowania. Spróbuj ponownie później.",
+    });
+  }
+
+  if (attempts.lockoutUntil && now >= attempts.lockoutUntil) {
+    attempts.count = 0;
+    attempts.lockoutUntil = null;
+  }
+
+  next();
+};
+
 // Middleware
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
 loadUsers();
 loadNotes();
 
-app.post("/login", validateLoginData, async (req, res) => {
+app.post("/login", rateLimitLogin, validateLoginData, async (req, res) => {
+  const ip = req.ip || req.connection.remoteAddress;
+  const { email, password } = req.body;
+
   try {
-    const { email, password } = req.body;
-
+    // Zawsze wykonaj bcrypt.compare dla ochrony przed timing attacks
     const user = users.find((user) => user.email === email);
+    const dummyHash = "$2b$12$dummy.hash.to.prevent.timing.attacks";
 
-    if (!user) {
+    const [isPasswordValid] = await Promise.all([
+      user
+        ? bcrypt.compare(password, user.password)
+        : bcrypt.compare(password, dummyHash),
+      new Promise((resolve) => setTimeout(resolve, Math.random() * 100)), // Random delay
+    ]);
+
+    if (!user || !isPasswordValid) {
+      // Zwiększ licznik prób
+      const attempts = loginAttempts.get(ip);
+      attempts.count++;
+
+      if (attempts.count >= MAX_LOGIN_ATTEMPTS) {
+        attempts.lockoutUntil = Date.now() + LOCKOUT_TIME;
+      }
+
+      console.log(`Failed login attempt for ${email} from ${ip}`);
+
       return res.status(401).json({
         error: "Nieprawidłowe dane logowania",
       });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    // Resetuj licznik po udanym logowaniu
+    loginAttempts.delete(ip);
 
-    if (!isPasswordValid) {
-      return res.status(401).json({
-        error: "Nieprawidłowe dane logowania",
-      });
-    }
+    console.log(`Successful login for ${email} from ${ip}`);
 
-    // Generuj JWT token
     const token = generateToken(user.id, user.email);
-
     res.json({
       token: token,
       userId: user.id,
