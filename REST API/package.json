@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "api": "json-server db.json -p 4000",
-    "pm2": "pm2 start json-server --name rest-api -- db.json -p 4000",
+    "pm2": "pm2 start index.js --name rest-api",
     "pm2:stop": "pm2 stop rest-api",
     "pm2:restart": "pm2 restart rest-api",
     "pm2:delete": "pm2 delete rest-api",
